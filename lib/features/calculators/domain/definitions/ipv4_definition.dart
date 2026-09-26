@@ -54,6 +54,7 @@ CalculatorDefinition createIpv4Definition() {
   );
   return CalculatorDefinition(
     id: 'ipv4-subnet',
+    supportsPlayground: true,
     supportsVisualLearning: true,
     name: 'IPv4 / CIDR Subnet',
     description: 'Understand network addresses, masks and host ranges.',

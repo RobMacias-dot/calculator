@@ -13,9 +13,11 @@ class DividerVisual extends StatelessWidget {
     super.key,
     required this.model,
     required this.viewModel,
+    this.showInputControls = true,
   });
   final DividerVisualModel model;
   final CalculatorViewModel viewModel;
+  final bool showInputControls;
 
   @override
   Widget build(BuildContext context) {
@@ -59,25 +61,27 @@ class DividerVisual extends StatelessWidget {
           'Both resistor symbols have equal size; their size does not encode resistance. '
           'The circuit is unloaded.',
         ),
-        VisualInputControl(
-          input: model.inputs.voltage,
-          viewModel: viewModel,
-          minimum: -24,
-          maximum: 24,
-          label: 'Input voltage Vin',
-        ),
-        VisualInputControl(
-          input: model.inputs.r1,
-          viewModel: viewModel,
-          minimum: 1,
-          maximum: 10000,
-        ),
-        VisualInputControl(
-          input: model.inputs.r2,
-          viewModel: viewModel,
-          minimum: 1,
-          maximum: 10000,
-        ),
+        if (showInputControls) ...[
+          VisualInputControl(
+            input: model.inputs.voltage,
+            viewModel: viewModel,
+            minimum: -24,
+            maximum: 24,
+            label: 'Input voltage Vin',
+          ),
+          VisualInputControl(
+            input: model.inputs.r1,
+            viewModel: viewModel,
+            minimum: 1,
+            maximum: 10000,
+          ),
+          VisualInputControl(
+            input: model.inputs.r2,
+            viewModel: viewModel,
+            minimum: 1,
+            maximum: 10000,
+          ),
+        ],
       ],
     );
   }

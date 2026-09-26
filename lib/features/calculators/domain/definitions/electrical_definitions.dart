@@ -178,6 +178,7 @@ CalculatorDefinition createVoltageDividerDefinition() {
   );
   return CalculatorDefinition(
     id: 'voltage-divider',
+    supportsPlayground: true,
     supportsVisualLearning: true,
     name: 'Voltage Divider',
     description: 'Find the output across the lower resistor R2.',

@@ -2,9 +2,13 @@
 
 Una caja de herramientas de ingeniería, offline y extensible, para estudiantes y profesionales. **Calculate. Understand. Build.**
 
-## Estado: Phase 5 — Visual Learning Foundation
+## Estado: Phase 9 — Internal Release Candidate assessment
 
-**30 calculadoras determinísticas y cuatro visualizaciones educativas opcionales.** Phase 4 añadió 25 herramientas a las cinco originales. Phase 5 incorpora Voltage Divider, Vector Magnitude, Reynolds e IPv4/CIDR como pilotos visuales; no añade calculadoras ni modifica sus motores matemáticos. Phase 6 no está implementada.
+Validación de release: **491/491 tests Flutter** (482 anteriores + 9 de hardening), **247/247 casos Dart y JavaScript/Node**, analyzer limpio y builds Android debug/profile/release/AAB. Smoke real en release, ejecución profile y persistencia tras detener/reiniciar el proceso Android. Se corrigió el registro de Recents al abrir Playgrounds directamente. [Phase 9 Release Candidate Validation](docs/phase9-validation.md) detalla cobertura, tamaños, permisos y límites: firma debug existente, TalkBack hablado/VoiceOver y rendimiento físico aún pendientes. No es una publicación ni un build listo para tienda.
+
+**30 calculadoras, ocho visualizaciones y tres Interactive Playgrounds:** Voltage Divider, IPv4/CIDR e Ideal Gas. `Explore interactively` abre una pantalla con entradas manuales, cálculo inmediato, resultado, escena y un panel de fórmula/sustitución/explicación. Comparte el ViewModel del formulario al entrar desde este; los enlaces directos tienen estado local. Conserva Learn visually, los motores y el registro único. No añade dependencias.
+
+Baseline histórico de Phase 8: **482 tests Flutter** (459 anteriores + 23 nuevos), **247/247 casos de dominio** en Dart y JavaScript/Node, analyzer sin incidencias y APK debug compilado. [Arquitectura y validación de Phase 8](docs/phase8-validation.md). Se conserva el [informe de Phase 7](docs/phase7-validation.md).
 
 | Categoría | Nuevas herramientas | Total |
 | --- | --- | ---: |
@@ -126,7 +130,7 @@ Los tests usan repositorios en memoria y un adaptador de storage simulado. Cubre
 
 ## Límites de esta entrega
 
-Iconos de instalación y firma de distribución siguen siendo los generados por Flutter; el build release utiliza la firma debug del scaffold y **no está preparado para tiendas**. Hace falta validación nativa con TalkBack/VoiceOver y dispositivos reales antes de una publicación. La restauración se verifica mediante tests con almacenamiento simulado; no sustituye un reinicio físico en Android/iOS. El motor físico usa `double`: valores o resultados intermedios fuera de rango se rechazan explícitamente. No incluye aritmética de precisión arbitraria. No se incluyen claves ni credenciales.
+Iconos de instalación y firma de distribución siguen siendo los generados por Flutter; el build release utiliza la firma debug del scaffold y **no está preparado para tiendas**. Hace falta completar el recorrido hablado con TalkBack, VoiceOver y validación en dispositivos reales antes de una publicación. Phase 9 verifica tema/favoritos/recientes mediante un reinicio real del proceso Android en emulador, además de los tests con almacenamiento simulado; no equivale a un dispositivo físico ni valida restauración de backup. El motor físico usa `double`: valores o resultados intermedios fuera de rango se rechazan explícitamente. No incluye aritmética de precisión arbitraria. No se incluyen claves ni credenciales.
 
 ## Chrome runner
 
@@ -134,7 +138,7 @@ En Phase 3 se revisó el log anterior y se hizo un smoke limpio con salida verbo
 
 ## Visual Learning Architecture
 
-Después de calcular, **Learn visually** abre una superficie modal construida bajo demanda. Solo aparece en los cuatro pilotos y permanece deshabilitada sin un resultado válido. El formulario conserva resultado, fórmula, explicación y edición manual.
+Después de calcular, **Learn visually** abre una superficie modal construida bajo demanda sobre el navegador raíz, cubriendo también la navegación inferior. Solo aparece en los ocho pilotos y permanece deshabilitada sin un resultado válido. El formulario conserva resultado, fórmula, explicación y edición manual.
 
 `CalculationResult + contexto validado → mapper de presentación → modelo inmutable → renderer`. Los controles vuelven al mismo `CalculatorViewModel`, que convierte sus entradas mediante las unidades existentes y ejecuta el motor habitual. La visualización no calcula el resultado principal ni es una fuente de verdad adicional.
 
@@ -144,15 +148,23 @@ Después de calcular, **Learn visually** abre una superficie modal construida ba
 | Vector Magnitude | Componentes y dirección en 2D; proyección oblicua explícita en 3D | Componentes disponibles del modo actual, con escala gráfica automática |
 | Reynolds | Trayectorias ilustrativas progresivamente irregulares; sin umbrales de régimen ni CFD | Velocidad y pausa/reanudación |
 | IPv4/CIDR | 32 bits de dirección, separación red/host y tamaño de bloque en escala logarítmica | Prefijo completo /0–/32, incluidas las convenciones /31 y /32 |
+| Newton | Bloque y flechas de aceleración de entrada y fuerza calculada; tamaños ilustrativos | Masa y aceleración, las entradas del único modo existente (fuerza) |
+| Torque | Pivote, brazo y fuerza perpendicular; magnitud del momento | Fuerza y brazo, sin inventar un ángulo o signo de rotación |
+| Bernoulli | Dos estaciones con elevaciones, velocidades y presiones; P2 procede del motor | P1, densidad, v1, v2, z1 y z2; sin inferir áreas ni caudal |
+| Ideal Gas | Cámara/pistón, cantidad de puntos y movimiento térmico ilustrativos; P/V/n/T numéricos del pipeline | Solo las tres entradas del modo actual y pausa/reanudación |
 
 Los rangos de sliders son exploratorios. Un valor manual fuera de rango permanece intacto hasta una edición explícita; solo se limita la posición del control. Los errores del motor ocultan la escena y permiten volver a las entradas.
 
-Reynolds usa un `AnimationController`, `CustomPainter.repaint`, seis trayectorias en caché y 24 partículas. Los ticks no reconstruyen la pantalla ni ejecutan cálculos. Las demás escenas son estáticas. Se respeta tanto Remove animations como Reduce Motion, además de pausa manual, estado de la app y `TickerMode`. Las escenas ofrecen resúmenes semánticos, controles etiquetados, navegación por teclado y texto adaptable en claro/oscuro.
+Reynolds usa un `AnimationController`, `CustomPainter.repaint`, seis trayectorias en caché y 24 partículas. Los ticks no reconstruyen la pantalla ni ejecutan cálculos. Ideal Gas añade otra escena animada, con 12–36 puntos determinísticos y geometría de pistón. Las otras seis escenas son estáticas. Se respeta tanto Remove animations como Reduce Motion, además de pausa manual, estado de la app, `TickerMode` y salida del diagrama del viewport al hacer scroll. Las escenas ofrecen resúmenes semánticos, controles etiquetados, navegación por teclado y texto adaptable en claro/oscuro.
 
 Para extender esta capa, véase [Visual Learning Architecture](docs/architecture.md#visual-learning-architecture): añadir datos tipados solo si faltan en el resultado, un mapper/modelo específico, un renderer y pruebas de interacción. No existe un framework universal de simulación. **Cero dependencias nuevas.**
 
 Cuatro capturas estáticas de revisión: `flutter test tool/capture_phase5.dart --update-goldens` genera `build/phase5-*.png`. No son baselines pixel-perfect ni pruebas de animación por frame. La incidencia del runner Chrome sigue documentada arriba; Dart/JavaScript/Node continúa siendo la verificación alternativa del dominio.
 
+Phase 6 añade las tres escenas físicas y endurece el ciclo de vida del modal/Reynolds, sin cambiar motores, modos ni dependencias. `flutter test tool/capture_phase6.dart --update-goldens` genera seis capturas de revisión de las nuevas escenas, incluido texto al 200%. Véase [validación de Phase 6](docs/phase6-validation.md) para los resultados y límites de la comprobación nativa.
+
+Validación de Phase 6: **426 tests Flutter**, **247/247 casos de dominio** en Dart y JavaScript/Node, analyzer sin incidencias, formato limpio y APK debug compilado. Las siete escenas se recorrieron en Pixel_7 (Android 17/API 37), incluyendo un control y cierre. TalkBack se activó, pero su aviso inicial impidió un smoke funcional fiable; se restauró la configuración original. VoiceOver y rendimiento físico siguen pendientes; no se afirma una medición de 60 fps.
+
 Validación de Phase 5: **397 tests Flutter** (363 anteriores + 34 nuevos), **247 casos de dominio** en Dart puro y JavaScript/Node, analyzer sin incidencias, formato correcto y APK debug compilado. Los tests previos, motores y archivos de dependencias se conservaron. Se cubren límites numéricos, todos los prefijos, unidades, teclado, semántica, contraste, 320 px/200% en ambos temas, tablet y ciclo de vida de la animación.
 
-Smoke Android: se instaló y abrió el APK en el emulador Pixel 7; se verificaron Home y su árbol de accesibilidad. El emulador perdió la conexión ADB durante la navegación y después dejó de aparecer entre dispositivos. **No se completó el recorrido nativo de los cuatro pilotos ni una medición de fps.** Quedan pendientes ese recorrido, TalkBack/VoiceOver y rendimiento sostenido en hardware físico. Evidencia local: `build/phase5-device-home.png`, `build/phase5-ui.xml` y `build/phase5-device-smoke.md`.
+Smoke histórico de Phase 5: se instaló y abrió el APK en el emulador Pixel 7; se verificaron Home y su árbol de accesibilidad. El emulador perdió la conexión ADB durante la navegación y después dejó de aparecer entre dispositivos. En esa fase no se completó el recorrido nativo de los cuatro pilotos ni una medición de fps; Phase 6 completa el recorrido de las siete escenas como se documenta arriba. Evidencia histórica local: `build/phase5-device-home.png`, `build/phase5-ui.xml` y `build/phase5-device-smoke.md`.

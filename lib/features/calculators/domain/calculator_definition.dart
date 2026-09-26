@@ -20,6 +20,7 @@ class CalculatorDefinition {
     List<String> keywords = const [],
     List<String> assumptions = const [],
     this.supportsVisualLearning = false,
+    this.supportsPlayground = false,
   }) : inputs = List.unmodifiable(inputs),
        modes = List.unmodifiable(modes),
        keywords = List.unmodifiable(keywords),
@@ -46,5 +47,6 @@ class CalculatorDefinition {
   final List<String> keywords;
   final List<String> assumptions;
   final bool supportsVisualLearning;
+  final bool supportsPlayground;
   bool get isAvailable => modes.isNotEmpty;
 }

@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/design_system/app_tokens.dart';
 import '../calculator_view_model.dart';
-import 'divider_visual.dart';
-import 'reynolds_visual.dart';
-import 'subnet_visual.dart';
-import 'vector_visual.dart';
 import 'visual_models.dart';
+import 'visual_model_view.dart';
 import 'visual_motion.dart';
 
 Future<void> showVisualLearning(
@@ -14,6 +11,9 @@ Future<void> showVisualLearning(
   CalculatorViewModel viewModel,
 ) => showModalBottomSheet<void>(
   context: context,
+  // Cover the shell navigation too; it must not dispose the borrowed form
+  // while this modal is still using its ViewModel.
+  useRootNavigator: true,
   isScrollControlled: true,
   useSafeArea: true,
   constraints: const BoxConstraints(maxWidth: 760),
@@ -94,24 +94,7 @@ class VisualLearningSheet extends StatelessWidget {
                         child: const Text('Return to inputs'),
                       ),
                     ] else
-                      switch (model) {
-                        DividerVisualModel() => DividerVisual(
-                          model: model,
-                          viewModel: viewModel,
-                        ),
-                        VectorVisualModel() => VectorVisual(
-                          model: model,
-                          viewModel: viewModel,
-                        ),
-                        ReynoldsVisualModel() => ReynoldsVisual(
-                          model: model,
-                          viewModel: viewModel,
-                        ),
-                        SubnetVisualModel() => SubnetVisual(
-                          model: model,
-                          viewModel: viewModel,
-                        ),
-                      },
+                      VisualModelView(model: model, viewModel: viewModel),
                     const SizedBox(height: AppSpacing.lg),
                   ],
                 );

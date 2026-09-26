@@ -9,14 +9,17 @@ import '../support/visual_learning_samples.dart';
 
 void main() {
   test(
-    'exactly the four pilots advertise capability; all successful contexts map',
+    'exactly eight pilots advertise capability; all successful contexts map',
     () {
       final supported = createInitialCatalog().all.where(
         (definition) => definition.supportsVisualLearning,
       );
       expect(
         supported.map((definition) => definition.id),
-        unorderedEquals(visualSamples.map((sample) => sample.id)),
+        unorderedEquals([
+          ...visualSamples.map((sample) => sample.id),
+          'ideal-gas-law',
+        ]),
       );
       for (final sample in visualSamples) {
         final vm = visualVm(sample.id, sample.values);

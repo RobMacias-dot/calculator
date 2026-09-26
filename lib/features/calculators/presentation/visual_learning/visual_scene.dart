@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/design_system/app_tokens.dart';
 
-/// Shared only by the four pilots: one useful semantics node, bounded geometry
+/// One useful semantics node, bounded geometry
 /// and repaint isolation. Numerical labels remain normal, scalable widgets.
 class VisualScene extends StatelessWidget {
   const VisualScene({super.key, required this.summary, required this.child});

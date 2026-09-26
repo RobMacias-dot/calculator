@@ -17,6 +17,19 @@ const visualSamples = [
     },
   ),
   (id: 'ipv4-subnet', values: {'address': '192.168.1.10', 'prefix': '24'}),
+  (id: 'newtons-second-law', values: {'mass': '2', 'acceleration': '3'}),
+  (id: 'torque', values: {'force': '20', 'radius': '.5'}),
+  (
+    id: 'bernoulli-basic',
+    values: {
+      'pressure1': '100000',
+      'density': '1000',
+      'speed1': '2',
+      'speed2': '4',
+      'height1': '3',
+      'height2': '1',
+    },
+  ),
 ];
 
 CalculatorViewModel visualVm(

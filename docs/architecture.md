@@ -54,7 +54,7 @@ Las tres herramientas nuevas reutilizan el parser IPv4: representación binaria 
 
 ## 3. Navegación
 
-`go_router` implementa exactamente `/`, `/category/:categoryId`, `/calculator/:calculatorId` y `/settings`. Las vistas reciben callbacks; no importan el router. El Shell conserva el marco y la navegación inferior. Categorías y calculadoras usan push/pop para admitir Atrás del sistema; una entrada directa dispone de un regreso explícito a categoría/Home. IDs inexistentes y rutas desconocidas presentan recuperación sin excepciones técnicas.
+`go_router` implementa `/`, `/category/:categoryId`, `/calculator/:calculatorId`, `/playground/:calculatorId` y `/settings`. Las vistas reciben callbacks; no importan el router. El Shell conserva el marco y la navegación inferior; Playground lo cubre con una ruta raíz. Categorías y calculadoras usan push/pop para admitir Atrás del sistema; una entrada directa dispone de un regreso explícito. IDs inexistentes y rutas desconocidas presentan recuperación sin excepciones técnicas.
 
 Home, Favorites y Tools siguen siendo secciones locales del mismo Home. Favorites resuelve IDs guardados contra el registro y ofrece exploración cuando está vacío; Tools es el catálogo completo con búsqueda y categoría. Conservan consulta/filtro durante la sesión; no prometen URLs o historial independiente de pestañas. Settings tiene su ruta propia. Solo tema, favoritos y recientes se restauran después de cerrar la aplicación; los formularios y la navegación no.
 
@@ -76,7 +76,7 @@ Pruebas en tres niveles: metadatos/motores, estado del ViewModel y flujos de wid
 
 Una herramienta nueva se registra una sola vez; router, búsqueda y conteos se derivan del catálogo. Al crecer, cada definición y estrategia puede vivir en su módulo de categoría, ensamblado explícitamente en el arranque. Se extraerán componentes compartidos solo después de conocer usos reales. El registro no debe convertirse en un contenedor de estado de formularios.
 
-Pendientes deliberados: historial de resultados, unidades de salida seleccionables, compartir por sistema y localización completa. Pendientes de distribución: iconos propios, ID de producto definitivo, firma de release y verificación nativa en iOS/Android. La plataforma web es una facilidad de desarrollo, no una promesa de PWA offline. No hay autenticación, backend, telemetría ni secretos. Phases 4 y 5 añaden cero dependencias; Phase 6 no está implementada.
+Pendientes deliberados: historial de resultados, unidades de salida seleccionables, compartir por sistema y localización completa. Pendientes de distribución: iconos propios, ID de producto definitivo, firma de release y verificación nativa en iOS/Android. La plataforma web es una facilidad de desarrollo, no una promesa de PWA offline. No hay autenticación, backend, telemetría ni secretos. Phases 4, 5 y 6 añaden cero dependencias.
 
 ### Revisión de escala de Phase 4
 
@@ -93,7 +93,7 @@ La deuda relevante sigue siendo validación nativa, bootstrap del runner Chrome 
 
 ## Visual Learning Architecture
 
-**Propósito.** Cuatro pilotos demuestran representaciones distintas sin convertir la app en un simulador. `CalculatorDefinition.supportsVisualLearning` es una capacidad opcional del registro existente: no duplica IDs, nombres, categorías, rutas o fórmulas. No hay un segundo registro. `CalculatorScreen` ofrece una acción secundaria, deshabilitada sin un cálculo válido. `showModalBottomSheet` construye la escena solo al abrirla, manteniendo montado el formulario y su ViewModel; no se modificó el router.
+**Propósito original (Phase 5).** Cuatro pilotos demuestran representaciones distintas sin convertir la app en un simulador. `CalculatorDefinition.supportsVisualLearning` es una capacidad opcional del registro existente: no duplica IDs, nombres, categorías, rutas o fórmulas. No hay un segundo registro. `CalculatorScreen` ofrece una acción secundaria, deshabilitada sin un cálculo válido. `showModalBottomSheet` construye la escena solo al abrirla, manteniendo montado el formulario y su ViewModel; no se modificó el router.
 
 **Pipeline y responsabilidades.** El dominio conserva opcionalmente un `CalculationContext` inmutable en `CalculationResult`: entradas normalizadas y sus descriptores tipados para divisor/vector/flujo, o el `Ipv4SubnetResult` exacto. Las definiciones ensamblan estos datos después de la validación y del motor; no cambia ninguna fórmula. `numericMode` recibe un callback opcional que empaqueta entradas ya convertidas. Ninguna clase de dominio importa Flutter ni geometría de pantalla.
 
@@ -118,3 +118,35 @@ Los controles convierten el valor base al selector de unidad actual con `Enginee
 Validación JavaScript alternativa: `dart compile js tool/test_domain_web.dart -o build/domain_checks.js` seguido de `node build/domain_checks.js` ejecuta los mismos casos con dart2js sin necesitar arrancar CanvasKit o el runner de navegador. Una salida correcta no produce errores; cualquier caso fallido termina el proceso con fallo. Esto comprueba la semántica numérica web, no sustituye pruebas visuales del navegador.
 
 Referencias: [arquitectura Flutter](https://docs.flutter.dev/app-architecture/recommendations), [go_router](https://pub.dev/packages/go_router), [números en Dart](https://dart.dev/resources/language/number-representation), [RFC 3021](https://www.rfc-editor.org/rfc/rfc3021).
+
+## Phase 6 — Siete visualizaciones
+
+La arquitectura anterior se conserva y se amplía con Newton, Torque y Bernoulli. El [informe de Phase 6](phase6-validation.md) documenta los contratos reales, los tres fallos de endurecimiento, las reglas de ciclo de vida, las escalas ilustrativas, las primitivas compartidas y la revisión explícita tras siete escenas. Los contextos retienen hechos validados; ninguna fórmula se traslada a presentación. No se introduce un framework universal.
+
+## Advanced Animated Scene — Ideal Gas
+
+Phase 7 añade únicamente Ideal Gas como octava escena. Sus cuatro modos conservan
+tres entradas y una salida; el renderer consume un contexto SI y el resultado
+existente, sin despejes propios. El pistón, 12–36 partículas determinísticas y la
+velocidad ilustran volumen, cantidad y temperatura mediante escalas acotadas.
+`VisualAnimationLifecycle` comparte solo las reglas idénticas de lifecycle con
+Reynolds; la lógica de partículas sigue siendo local. No hay motor de física ni
+sistema genérico de partículas. Véase [contrato, decisiones y validación de Phase 7](phase7-validation.md).
+
+## Interactive Playground Architecture
+
+Phase 8 compone entradas, reporte y escena en una ruta dedicada. Solo Voltage Divider, IPv4/CIDR e Ideal Gas activan `CalculatorDefinition.supportsPlayground`, opcional y falso por defecto. El registro existente sigue siendo la única fuente de capacidades; no hay lista paralela de pilotos en producción.
+
+**Estado y navegación.** `/playground/:calculatorId` resuelve la definición contra el registro. La acción del formulario pasa su mismo `CalculatorViewModel` en `extra`; la pantalla presta ese estado sin disponerlo. La ruta raíz cubre la navegación inferior y mantiene vivo al propietario. Los cambios quedan en el formulario al volver/reabrir. Si había texto sin calcular, la entrada ejecuta el pipeline habitual. Un enlace directo crea un VM local, lo dispone al salir y su botón Atrás abre el formulario normal vacío. Desde Phase 9, abrir un Playground registra su ID en Recents mediante el mismo `PreferencesController`, después del primer frame y solo si sigue montado, igual que el formulario. No hay persistencia de experimentos ni estado global de cálculo adicional.
+
+**Pipeline único.** Edición → `updateAndCalculate` (o `setUnit(recalculate: true)`) → parser, validación, unidades y motor existentes → un `CalculationResult` → resumen/detalles y `mapVisualModel` → renderer. El selector reutiliza `selectMode`, que limpia campos, unidades, errores y resultado. Todos los outputs de un build derivan del mismo reporte. Los controllers de texto son buffers del editor para conservar foco/caret/composición; el VM sigue siendo autoritativo. No hay fórmulas, solver, debounce, streams ni cálculo asíncrono en Playground.
+
+**Estados inválidos: política B.** Vacío, `-`, `.`, `1e`, IPv4 incompleta o validación fallida retiran resultado, sustitución y escena inmediatamente. Quedan errores inline, `Waiting for valid inputs` y la fórmula/descripción del modo. Los parsers existentes rechazan texto incompleto antes del motor numérico. Al recuperarse se crea un reporte nuevo; nunca se muestra el anterior como actual.
+
+**Composición reutilizada.** La duplicación real entre el formulario y los tres pilotos justificó extraer `CalculatorModeSelector`, `CalculationResultSummary`, `CalculationResultDetails` y `VisualModelView`. Los campos existentes ganan edición live opcional; los tres renderers ganan `showInputControls`, verdadero por defecto para Learn visually. Playground usa una representación manual por variable y oculta sliders redundantes. IPv4 mantiene dirección textual y prefijo entero completo 0–32; no se aplican límites exploratorios a entradas de ingeniería.
+
+**Responsive y accesibilidad.** Scroll vertical, max-width 1200; dos regiones solo con al menos 900 px útiles y escala de texto ≤150%. A 200% vuelve a una columna. Los controles conservan labels, unidades y validación. Resultado identifica el modo calculado y es región semántica live; el canvas conserva su resumen. `How it is calculated` contiene texto accesible y seleccionable, sin transición animada. Focus traversal usa orden de lectura. Hay pruebas de teclado, contraste, targets, ambos temas y 320×640, 430×932, 1024×768 al 200%.
+
+**Animación.** Ideal Gas conserva un único controller del renderer y `VisualAnimationLifecycle`: pausa, ambas señales Reduce Motion, lifecycle, TickerMode y visibilidad de scroll. El painter recibe repaint; sus ticks no notifican al VM ni reconstruyen campos, resultado o explicación. La shell no añade controller. No se afirma una medición de fps en dispositivo físico.
+
+**Extensión deliberada.** Un próximo candidato necesita un reporte/contexto que su mapper y renderer existentes puedan representar, controles reutilizables sin duplicación, y validación de modos/unidades/semántica/ciclo de vida. Solo después se activa la capacidad en su definición y se añaden tests. No basta con tener Learn visually: los otros cinco siguen sin Playground. No se soporta un laboratorio universal, persistencia de experimentos, otras calculadoras, nuevas escenas, backend o IA. Véase [validación y revisión de Phase 8](phase8-validation.md).

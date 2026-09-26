@@ -6,9 +6,15 @@ import '../calculator_view_model.dart';
 import 'visual_models.dart';
 
 class SubnetVisual extends StatelessWidget {
-  const SubnetVisual({super.key, required this.model, required this.viewModel});
+  const SubnetVisual({
+    super.key,
+    required this.model,
+    required this.viewModel,
+    this.showInputControls = true,
+  });
   final SubnetVisualModel model;
   final CalculatorViewModel viewModel;
+  final bool showInputControls;
 
   @override
   Widget build(BuildContext context) {
@@ -92,27 +98,31 @@ class SubnetVisual extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(model.report.explanation),
-        const SizedBox(height: AppSpacing.md),
-        Text(
-          'CIDR prefix: /${subnet.prefix}',
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        Semantics(
-          label: 'CIDR prefix',
-          child: Slider(
-            key: const ValueKey('visual-control-prefix'),
-            min: 0,
-            max: 32,
-            divisions: 32,
-            value: subnet.prefix.toDouble(),
-            semanticFormatterCallback: (value) => '/${value.round()}',
-            onChanged: (value) => viewModel.updateAndCalculate(
-              Ipv4Input.prefix.name,
-              value.round().toString(),
+        if (showInputControls) ...[
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            'CIDR prefix: /${subnet.prefix}',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          Semantics(
+            label: 'CIDR prefix',
+            child: Slider(
+              key: const ValueKey('visual-control-prefix'),
+              min: 0,
+              max: 32,
+              divisions: 32,
+              value: subnet.prefix.toDouble(),
+              semanticFormatterCallback: (value) => '/${value.round()}',
+              onChanged: (value) => viewModel.updateAndCalculate(
+                Ipv4Input.prefix.name,
+                value.round().toString(),
+              ),
             ),
           ),
-        ),
-        const Text('Explore /0 through /32. The IPv4 address stays unchanged.'),
+          const Text(
+            'Explore /0 through /32. The IPv4 address stays unchanged.',
+          ),
+        ],
       ],
     );
   }

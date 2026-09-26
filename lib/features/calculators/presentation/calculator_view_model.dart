@@ -50,12 +50,17 @@ class CalculatorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setUnit(String id, EngineeringUnit unit) {
+  void setUnit(String id, EngineeringUnit unit, {bool recalculate = false}) {
     final input = _inputs.where((input) => input.id == id).firstOrNull;
     if (input == null || !input.units.contains(unit) || _units[id] == unit) {
       return;
     }
     _units[id] = unit;
+    if (recalculate) {
+      _revision++;
+      calculate();
+      return;
+    }
     _invalidate();
     notifyListeners();
   }

@@ -6,7 +6,7 @@ import '../../../../core/design_system/app_tokens.dart';
 import '../calculator_view_model.dart';
 import 'visual_controls.dart';
 import 'visual_models.dart';
-import 'visual_motion.dart';
+import 'visual_animation_lifecycle.dart';
 import 'visual_scene.dart';
 
 class ReynoldsVisual extends StatefulWidget {
@@ -23,78 +23,12 @@ class ReynoldsVisual extends StatefulWidget {
 }
 
 class _ReynoldsVisualState extends State<ReynoldsVisual>
-    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  late final AnimationController _clock;
-  bool _paused = false;
-  bool _reduced = false;
-  bool _visible = true;
-  bool _foreground = true;
-
+    with
+        SingleTickerProviderStateMixin,
+        WidgetsBindingObserver,
+        VisualAnimationLifecycle<ReynoldsVisual> {
   @override
-  void initState() {
-    super.initState();
-    _clock = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 4),
-    );
-    WidgetsBinding.instance.addObserver(this);
-    _foreground =
-        WidgetsBinding.instance.lifecycleState == null ||
-        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _reduced = reduceVisualMotion(context);
-    _visible = TickerMode.valuesOf(context).enabled;
-    _syncMotion();
-  }
-
-  @override
-  void didUpdateWidget(ReynoldsVisual oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _syncMotion();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    _foreground = state == AppLifecycleState.resumed;
-    _syncMotion();
-  }
-
-  @override
-  void didChangeAccessibilityFeatures() {
-    if (!mounted) return;
-    setState(() {
-      final features = View.of(context)
-          .platformDispatcher
-          .accessibilityFeatures;
-      _reduced = features.reduceMotion || features.disableAnimations;
-      _syncMotion();
-    });
-  }
-
-  void _syncMotion() {
-    final running =
-        !_paused &&
-        !_reduced &&
-        _visible &&
-        _foreground &&
-        widget.model.hasFlow;
-    if (running && !_clock.isAnimating) {
-      _clock.repeat();
-    } else if (!running && _clock.isAnimating) {
-      _clock.stop();
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _clock.dispose();
-    super.dispose();
-  }
+  bool get motionUseful => widget.model.hasFlow;
 
   @override
   Widget build(BuildContext context) {
@@ -104,11 +38,12 @@ class _ReynoldsVisualState extends State<ReynoldsVisual>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         VisualScene(
+          key: visualSceneKey,
           summary: model.summary,
           child: CustomPaint(
             key: const ValueKey('reynolds-canvas'),
             painter: ReynoldsPainter(
-              phase: _clock,
+              phase: visualClock,
               irregularity: model.irregularity,
               ink: colors.onSurfaceVariant,
               accent: colors.primary,
@@ -132,7 +67,7 @@ class _ReynoldsVisualState extends State<ReynoldsVisual>
           'with no classification boundaries.',
         ),
         const SizedBox(height: AppSpacing.md),
-        if (_reduced)
+        if (motionReduced)
           const Text(
             'Reduce Motion is on. Static paths preserve the same visual information.',
           )
@@ -141,13 +76,13 @@ class _ReynoldsVisualState extends State<ReynoldsVisual>
         else
           OutlinedButton.icon(
             onPressed: () => setState(() {
-              _paused = !_paused;
-              _syncMotion();
+              motionPaused = !motionPaused;
+              syncVisualMotion();
             }),
             icon: Icon(
-              _paused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+              motionPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
             ),
-            label: Text(_paused ? 'Play flow' : 'Pause flow'),
+            label: Text(motionPaused ? 'Play flow' : 'Pause flow'),
           ),
         VisualInputControl(
           input: model.inputs.speed,

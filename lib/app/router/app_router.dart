@@ -8,6 +8,8 @@ import '../../features/calculators/domain/calculator_category.dart';
 import '../../features/calculators/domain/calculator_registry.dart';
 import '../../features/calculators/presentation/calculator_preview_screen.dart';
 import '../../features/calculators/presentation/calculator_screen.dart';
+import '../../features/calculators/presentation/calculator_view_model.dart';
+import '../../features/calculators/presentation/playground_screen.dart';
 import '../../features/calculators/presentation/category_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/home/presentation/home_view_model.dart';
@@ -19,6 +21,7 @@ abstract final class AppRoutes {
   static const category = 'category';
   static const calculator = 'calculator';
   static const settings = 'settings';
+  static const playground = 'playground';
 }
 
 GoRouter createAppRouter({
@@ -34,6 +37,39 @@ GoRouter createAppRouter({
     ),
   ),
   routes: [
+    // Root route covers shell navigation while borrowing its calculator state.
+    GoRoute(
+      path: '/playground/:calculatorId',
+      name: AppRoutes.playground,
+      builder: (context, state) {
+        final definition = registry.byId(state.pathParameters['calculatorId']!);
+        if (definition == null || !definition.supportsPlayground) {
+          return Scaffold(
+            body: SafeArea(
+              child: _NotFound(onHome: () => context.goNamed(AppRoutes.home)),
+            ),
+          );
+        }
+        final supplied = state.extra;
+        final borrowed =
+            supplied is CalculatorViewModel &&
+                identical(supplied.definition, definition)
+            ? supplied
+            : null;
+        return PlaygroundScreen(
+          key: ValueKey('playground-${definition.id}'),
+          definition: definition,
+          viewModel: borrowed,
+          preferences: preferences,
+          onBack: () => context.canPop()
+              ? context.pop()
+              : context.goNamed(
+                  AppRoutes.calculator,
+                  pathParameters: {'calculatorId': definition.id},
+                ),
+        );
+      },
+    ),
     ShellRoute(
       builder: (context, state, child) => ListenableBuilder(
         listenable: home,
@@ -125,6 +161,19 @@ GoRouter createAppRouter({
                 definition: calculator,
                 preferences: preferences,
                 onBack: onBack,
+                onExplore: (viewModel) {
+                  if (viewModel.result == null &&
+                      viewModel.inputs.any(
+                        (input) => viewModel.valueFor(input.id).isNotEmpty,
+                      )) {
+                    viewModel.calculate();
+                  }
+                  context.pushNamed<void>(
+                    AppRoutes.playground,
+                    pathParameters: {'calculatorId': calculator.id},
+                    extra: viewModel,
+                  );
+                },
               );
             }
             return CalculatorPreviewScreen(

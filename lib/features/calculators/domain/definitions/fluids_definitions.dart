@@ -1,5 +1,6 @@
 import '../../../../core/formatting/number_formatting.dart';
 import '../calculator_category.dart';
+import '../calculation_context.dart';
 import '../calculator_definition.dart';
 import '../numeric_mode.dart';
 import '../engines/fluids.dart';
@@ -178,6 +179,14 @@ CalculatorDefinition createBernoulliDefinition() {
   );
   final mode0 = numericMode(
     id: 'pressure2',
+    context: (v) => BernoulliContext(
+      CalculatedInput(pressure1, v[pressure1.id]!, EngineeringUnit.pascal),
+      CalculatedInput(density, v[density.id]!, EngineeringUnit.density),
+      CalculatedInput(speed1, v[speed1.id]!, EngineeringUnit.velocity),
+      CalculatedInput(speed2, v[speed2.id]!, EngineeringUnit.velocity),
+      CalculatedInput(height1, v[height1.id]!, EngineeringUnit.metre),
+      CalculatedInput(height2, v[height2.id]!, EngineeringUnit.metre),
+    ),
     label: 'Downstream pressure P2',
     formula: 'P2 = P1 + ½ρ(v1² − v2²) + ρg(z1 − z2)',
     inputs: [pressure1, density, speed1, speed2, height1, height2],
@@ -198,6 +207,7 @@ CalculatorDefinition createBernoulliDefinition() {
   );
   return CalculatorDefinition(
     id: 'bernoulli-basic',
+    supportsVisualLearning: true,
     name: 'Bernoulli — Basic',
     description: 'Solve downstream pressure P2 along a streamline.',
     category: CalculatorCategory.fluids,

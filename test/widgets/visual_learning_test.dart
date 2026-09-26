@@ -58,6 +58,83 @@ ReynoldsPainter flowPainter(WidgetTester tester) =>
         as ReynoldsPainter;
 
 void main() {
+  testWidgets('modal hides shell navigation from accessibility and input', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    try {
+      await openVisual(
+        tester,
+        visualSamples[0].id,
+        visualSamples[0].values,
+        reduced: true,
+      );
+      expect(find.bySemanticsLabel('Home').hitTestable(), findsNothing);
+      expect(find.bySemanticsLabel('Settings').hitTestable(), findsNothing);
+      final labels = tester.semantics.simulatedAccessibilityTraversal().map(
+        (node) => node.getSemanticsData().label,
+      );
+      expect(labels, isNot(contains('Home')));
+      expect(labels, isNot(contains('Settings')));
+    } finally {
+      semantics.dispose();
+    }
+  });
+
+  testWidgets(
+    'Reynolds pauses outside the scroll viewport and resumes on return',
+    (tester) async {
+      await openVisual(
+        tester,
+        visualSamples[2].id,
+        visualSamples[2].values,
+        size: const Size(320, 640),
+      );
+      final phase = flowPainter(tester).phase;
+      await tester.ensureVisible(find.byType(Slider).last);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      final stopped = phase.value;
+      await tester.pump(const Duration(seconds: 1));
+      expect(phase.value, stopped);
+      await tester.ensureVisible(find.byKey(const ValueKey('reynolds-canvas')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(phase.value, isNot(stopped));
+      await tester.tap(find.byTooltip('Close visualization'));
+      await tester.pumpAndSettle();
+      expect(tester.binding.transientCallbackCount, 0);
+    },
+  );
+
+  testWidgets(
+    'Reynolds preserves inherited reduced motion on platform changes',
+    (tester) async {
+      final vm = visualVm(visualSamples[2].id, visualSamples[2].values);
+      addTearDown(vm.dispose);
+      addTearDown(
+        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(disableAnimations: true),
+            child: Scaffold(body: VisualLearningSheet(viewModel: vm)),
+          ),
+        ),
+      );
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(boldText: true);
+      await tester.pump();
+      final phase = flowPainter(tester).phase;
+      final stopped = phase.value;
+      await tester.pump(const Duration(seconds: 1));
+      expect(phase.value, stopped);
+      expect(find.textContaining('Reduce Motion is on'), findsOneWidget);
+    },
+  );
+
   testWidgets(
     'manual values outside slider range are retained, only thumb is clamped',
     (tester) async {
@@ -84,7 +161,7 @@ void main() {
     },
   );
 
-  testWidgets('all four surfaces also fit a tablet viewport', (tester) async {
+  testWidgets('all seven surfaces also fit a tablet viewport', (tester) async {
     for (final sample in visualSamples) {
       await openVisual(
         tester,
@@ -187,7 +264,7 @@ void main() {
             expect(
               find.bySemanticsLabel(
                 RegExp(
-                  r'Voltage divider\.|2D vector\.|Reynolds number|IPv4 192',
+                  r'Voltage divider\.|2D vector\.|Reynolds number|IPv4 192|Newton’s Second Law\.|Torque\.|Bernoulli\.',
                 ),
               ),
               findsWidgets,

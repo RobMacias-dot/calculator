@@ -1,5 +1,6 @@
 import '../../../../core/formatting/number_formatting.dart';
 import '../calculator_category.dart';
+import '../calculation_context.dart';
 import '../calculator_definition.dart';
 import '../engines/newtons_second_law.dart';
 import '../numeric_mode.dart';
@@ -18,6 +19,14 @@ CalculatorDefinition createNewtonDefinition() {
   );
   final mode = numericMode(
     id: 'force',
+    context: (v) => NewtonContext(
+      CalculatedInput(mass, v[mass.id]!, EngineeringUnit.kilogram),
+      CalculatedInput(
+        acceleration,
+        v[acceleration.id]!,
+        EngineeringUnit.acceleration,
+      ),
+    ),
     label: 'Force (F)',
     formula: 'F = m × a',
     inputs: [mass, acceleration],
@@ -33,6 +42,7 @@ CalculatorDefinition createNewtonDefinition() {
   );
   return CalculatorDefinition(
     id: 'newtons-second-law',
+    supportsVisualLearning: true,
     name: 'Newton’s Second Law',
     description: 'Connect mass and acceleration to net force.',
     category: CalculatorCategory.mechanical,

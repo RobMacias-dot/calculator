@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../core/design_system/app_tokens.dart';
 import '../../../core/design_system/glass_card.dart';
 import '../domain/calculator_definition.dart';
-import '../domain/calculator_mode.dart';
+import 'calculator_mode_selector.dart';
 import 'calculator_input_field.dart';
 import 'calculator_view_model.dart';
 import 'result_card.dart';
@@ -19,10 +19,12 @@ class CalculatorScreen extends StatefulWidget {
     required this.definition,
     required this.onBack,
     required this.preferences,
+    this.onExplore,
   });
   final CalculatorDefinition definition;
   final VoidCallback onBack;
   final PreferencesController preferences;
+  final ValueChanged<CalculatorViewModel>? onExplore;
 
   @override
   State<CalculatorScreen> createState() => _CalculatorScreenState();
@@ -119,23 +121,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (widget.definition.modes.length > 1) ...[
-                    DropdownButtonFormField<CalculatorMode>(
-                      key: ValueKey('solve-for-${_viewModel.revision}'),
-                      initialValue: _viewModel.mode,
-                      isExpanded: true,
-                      itemHeight: null,
-                      decoration: const InputDecoration(labelText: 'Solve for'),
-                      items: [
-                        for (final mode in widget.definition.modes)
-                          DropdownMenuItem(
-                            value: mode,
-                            child: Text(mode.label),
-                          ),
-                      ],
-                      onChanged: (mode) {
-                        if (mode != null) _viewModel.selectMode(mode);
-                      },
-                    ),
+                    CalculatorModeSelector(viewModel: _viewModel),
                     const SizedBox(height: AppSpacing.lg),
                   ],
                   Text('Inputs', style: theme.textTheme.titleMedium),
@@ -237,6 +223,18 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               ),
               if (_viewModel.result == null)
                 const Text('Calculate with valid inputs to explore visually.'),
+            ],
+            if (widget.definition.supportsPlayground &&
+                widget.onExplore != null) ...[
+              const SizedBox(height: AppSpacing.md),
+              FilledButton.icon(
+                onPressed: () {
+                  FocusScope.of(context).unfocus();
+                  widget.onExplore!(_viewModel);
+                },
+                icon: const Icon(Icons.tune_rounded),
+                label: const Text('Explore interactively'),
+              ),
             ],
           ],
         ),

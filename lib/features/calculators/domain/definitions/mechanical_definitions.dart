@@ -1,5 +1,6 @@
 import '../../../../core/formatting/number_formatting.dart';
 import '../calculator_category.dart';
+import '../calculation_context.dart';
 import '../calculator_definition.dart';
 import '../numeric_mode.dart';
 import '../engines/mechanical.dart';
@@ -21,6 +22,10 @@ CalculatorDefinition createTorqueDefinition() {
   );
   final mode0 = numericMode(
     id: 'torque',
+    context: (v) => TorqueContext(
+      CalculatedInput(force, v[force.id]!, EngineeringUnit.newton),
+      CalculatedInput(radius, v[radius.id]!, EngineeringUnit.metre),
+    ),
     label: 'Torque (τ)',
     formula: 'τ = F × r',
     inputs: [force, radius],
@@ -35,6 +40,7 @@ CalculatorDefinition createTorqueDefinition() {
   return CalculatorDefinition(
     id: 'torque',
     name: 'Torque',
+    supportsVisualLearning: true,
     description: 'Find turning moment from perpendicular force.',
     category: CalculatorCategory.mechanical,
     formula: mode0.formula,

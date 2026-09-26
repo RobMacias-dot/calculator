@@ -1,5 +1,6 @@
 import '../../../../core/formatting/number_formatting.dart';
 import '../calculator_category.dart';
+import '../calculation_context.dart';
 import '../calculator_definition.dart';
 import '../engines/ideal_gas_law.dart';
 import '../numeric_mode.dart';
@@ -40,6 +41,12 @@ CalculatorDefinition createIdealGasDefinition() {
   );
   String f(NormalizedValues values, CalculatorInput input) =>
       NumberFormatting.format(values[input.id]!);
+  IdealGasContext context(GasVariable solved, NormalizedValues values) =>
+      IdealGasContext(solved, [
+        for (final field in [pressure, volume, amount, temperature])
+          if (field.id != solved.name)
+            CalculatedInput(field, values[field.id]!, field.units.first),
+      ]);
   const rText = '${IdealGasLaw.gasConstant} Pa·m³/(mol·K)';
   const warnings = [
     'Ideal gas approximation. Use absolute pressure, not gauge pressure. Real gases may deviate from this model.',
@@ -47,6 +54,7 @@ CalculatorDefinition createIdealGasDefinition() {
   final modes = [
     numericMode(
       id: GasVariable.pressure.name,
+      context: (v) => context(GasVariable.pressure, v),
       label: 'Pressure (P)',
       formula: 'P = n × R × T / V',
       inputs: [amount, temperature, volume],
@@ -64,6 +72,7 @@ CalculatorDefinition createIdealGasDefinition() {
     ),
     numericMode(
       id: GasVariable.volume.name,
+      context: (v) => context(GasVariable.volume, v),
       label: 'Volume (V)',
       formula: 'V = n × R × T / P',
       inputs: [amount, temperature, pressure],
@@ -81,6 +90,7 @@ CalculatorDefinition createIdealGasDefinition() {
     ),
     numericMode(
       id: GasVariable.amount.name,
+      context: (v) => context(GasVariable.amount, v),
       label: 'Amount (n)',
       formula: 'n = P × V / (R × T)',
       inputs: [pressure, volume, temperature],
@@ -98,6 +108,7 @@ CalculatorDefinition createIdealGasDefinition() {
     ),
     numericMode(
       id: GasVariable.temperature.name,
+      context: (v) => context(GasVariable.temperature, v),
       label: 'Temperature (T)',
       formula: 'T = P × V / (n × R)',
       inputs: [pressure, volume, amount],
@@ -116,6 +127,8 @@ CalculatorDefinition createIdealGasDefinition() {
   ];
   return CalculatorDefinition(
     id: 'ideal-gas-law',
+    supportsPlayground: true,
+    supportsVisualLearning: true,
     name: 'Ideal Gas Law',
     description: 'Solve absolute pressure, volume, amount or temperature.',
     category: CalculatorCategory.thermodynamics,
