@@ -5,6 +5,15 @@ abstract final class NumberFormatting {
   static const relativeTolerance = 1e-10;
   static const absoluteTolerance = 1e-12;
 
+  /// Substituted operands must describe the actual normalized inputs, especially
+  /// when nearly equal values are subtracted. Keep the compact form only when
+  /// it round-trips; this does not change rounding of ordinary results.
+  static String operand(double value) {
+    final compact = format(value);
+    if (!value.isFinite || double.parse(compact) == value) return compact;
+    return value.toString();
+  }
+
   /// Never feeds back into calculations. Nonfinite values are not valid results.
   static String format(double value) {
     if (!value.isFinite) return 'Not representable';

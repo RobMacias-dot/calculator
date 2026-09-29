@@ -40,7 +40,7 @@ CalculatorDefinition createIdealGasDefinition() {
     minimumExclusive: true,
   );
   String f(NormalizedValues values, CalculatorInput input) =>
-      NumberFormatting.format(values[input.id]!);
+      NumberFormatting.operand(values[input.id]!);
   IdealGasContext context(GasVariable solved, NormalizedValues values) =>
       IdealGasContext(solved, [
         for (final field in [pressure, volume, amount, temperature])
@@ -136,6 +136,11 @@ CalculatorDefinition createIdealGasDefinition() {
     explanation: 'PV = nRT. Use a positive amount of gas, volume, absolute pressure and absolute temperature.',
     inputs: modes.first.inputs,
     modes: modes,
+    assumptions: [
+      'Describes a single equilibrium gas state with the ideal-gas approximation. Real-gas interactions and condensation are outside the model.',
+      'Pressure is absolute, not gauge; temperature is absolute and converted to kelvin. Pressure, volume, amount and temperature must all be positive.',
+      'Solving a different variable rearranges the same state relation; it does not specify a heating or compression process.',
+    ],
     keywords: ['pressure', 'volume', 'temperature', 'moles', 'gas'],
   );
 }

@@ -109,7 +109,9 @@ void main() {
         },
         {
           'pressure1': '1e300',
-          'density': '1e-200',
+          // Keep the kinetic head representable; underflow now correctly
+          // yields a range failure rather than a successful visual report.
+          'density': '1e-100',
           'speed1': '0',
           'speed2': '1e-100',
         },

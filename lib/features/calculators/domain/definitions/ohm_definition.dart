@@ -36,7 +36,7 @@ CalculatorDefinition createOhmDefinition() {
     minimumExclusive: true,
   );
   String v(NormalizedValues values) =>
-      NumberFormatting.format(values[voltage.id]!);
+      NumberFormatting.operand(values[voltage.id]!);
   final nonnegativeResistance = CalculatorInput(
     id: resistance.id,
     label: resistance.label,
@@ -44,9 +44,9 @@ CalculatorDefinition createOhmDefinition() {
     minimum: 0,
   );
   String i(NormalizedValues values) =>
-      NumberFormatting.format(values[current.id]!);
+      NumberFormatting.operand(values[current.id]!);
   String r(NormalizedValues values) =>
-      NumberFormatting.format(values[resistance.id]!);
+      NumberFormatting.operand(values[resistance.id]!);
 
   final modes = [
     numericMode(
@@ -101,6 +101,10 @@ CalculatorDefinition createOhmDefinition() {
     explanation: 'Relates voltage, current and resistance in an ohmic conductor. Uses a passive resistor convention; signed voltage and current describe polarity.',
     inputs: modes.first.inputs,
     modes: modes,
+    assumptions: [
+      'Models an ohmic element with constant resistance at the operating conditions. Heating, nonlinear components and AC reactance are outside this model.',
+      'Use voltage polarity and current direction consistently with the passive resistor convention; a negative resistance is not supported.',
+    ],
     keywords: ['ohm', 'voltage', 'current', 'resistance', 'circuit'],
   );
 }

@@ -80,6 +80,25 @@ abstract final class Bernoulli {
     if (issues.isNotEmpty) return CalculationFailure(issues);
     final kinetic = (0.5 * density * (speed1 - speed2)) * (speed1 + speed2);
     final potential = density * gravity * (height1 - height2);
-    return checkedResult(pressure1 + kinetic + potential, zeroExpected: true);
+    // Zero is valid for equal stations or final cancellation, but not for a
+    // nonzero contribution that was lost to intermediate underflow.
+    for (final term in [
+      (kinetic, speed1 == speed2),
+      (potential, height1 == height2),
+    ]) {
+      final checked = checkedResult(term.$1, zeroExpected: term.$2);
+      if (checked is CalculationFailure<double>) return checked;
+    }
+    // Neumaier compensation retains a small pressure between cancelling heads.
+    var sum = pressure1;
+    var correction = 0.0;
+    for (final term in [kinetic, potential]) {
+      final next = sum + term;
+      correction += sum.abs() >= term.abs()
+          ? (sum - next) + term
+          : (term - next) + sum;
+      sum = next;
+    }
+    return checkedResult(sum + correction, zeroExpected: true);
   }
 }

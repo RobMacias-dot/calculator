@@ -16,9 +16,11 @@ class CalculatorMode {
     required this.formula,
     required List<CalculatorInput> inputs,
     required this.calculate,
+    List<String> assumptions = const [],
     this.inputHint =
         'Use a dot or comma for decimals. No thousands separators.',
-  }) : inputs = List.unmodifiable(inputs) {
+  }) : inputs = List.unmodifiable(inputs),
+       assumptions = List.unmodifiable(assumptions) {
     if (id.isEmpty ||
         label.isEmpty ||
         inputs.isEmpty ||
@@ -35,4 +37,8 @@ class CalculatorMode {
   final List<CalculatorInput> inputs;
   final CalculateInputs calculate;
   final String inputHint;
+
+  /// Static notes specific to this mode, additional to definition assumptions.
+  /// Descriptive only; never used by the calculation callback.
+  final List<String> assumptions;
 }

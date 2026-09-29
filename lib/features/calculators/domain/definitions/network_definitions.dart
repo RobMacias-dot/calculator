@@ -67,6 +67,7 @@ CalculatorDefinition createSubnetMaskDefinition() {
     id: 'mask',
     label: 'CIDR to mask',
     formula: 'Mask = prefix one bits followed by zeros',
+    inputHint: 'Enter an integer prefix from 0 to 32, without the slash.',
     inputs: [
       CalculatorInput(
         id: 'prefix',

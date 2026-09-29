@@ -34,7 +34,7 @@ CalculatorDefinition createDcPowerDefinition() {
     solve: (v) =>
         DcPower.power(voltage: v[voltage.id]!, current: v[current.id]!),
     substitution: (v) =>
-        'P = ${NumberFormatting.format(v[voltage.id]!)} V × ${NumberFormatting.format(v[current.id]!)} A',
+        'P = ${NumberFormatting.operand(v[voltage.id]!)} V × ${NumberFormatting.operand(v[current.id]!)} A',
     explanation: (v, result) =>
         'The circuit transfers energy at a rate of $result W. A negative sign denotes delivered power.',
     alternateUnits: [EngineeringUnit.kilowatt],
@@ -47,7 +47,7 @@ CalculatorDefinition createDcPowerDefinition() {
     unit: EngineeringUnit.volt,
     solve: (v) => DcPower.voltage(power: v[power.id]!, current: v[current.id]!),
     substitution: (v) =>
-        'V = ${NumberFormatting.format(v[power.id]!)} W / ${NumberFormatting.format(v[current.id]!)} A',
+        'V = ${NumberFormatting.operand(v[power.id]!)} W / ${NumberFormatting.operand(v[current.id]!)} A',
     explanation: (v, result) =>
         'A potential difference of $result V supports the specified DC power and current.',
     alternateUnits: [],
@@ -60,7 +60,7 @@ CalculatorDefinition createDcPowerDefinition() {
     unit: EngineeringUnit.ampere,
     solve: (v) => DcPower.current(power: v[power.id]!, voltage: v[voltage.id]!),
     substitution: (v) =>
-        'I = ${NumberFormatting.format(v[power.id]!)} W / ${NumberFormatting.format(v[voltage.id]!)} V',
+        'I = ${NumberFormatting.operand(v[power.id]!)} W / ${NumberFormatting.operand(v[voltage.id]!)} V',
     explanation: (v, result) =>
         'A current of $result A transfers the specified power at this voltage.',
     alternateUnits: [],
@@ -76,6 +76,7 @@ CalculatorDefinition createDcPowerDefinition() {
     modes: [mode0, mode1, mode2],
     assumptions: [
       'Constant DC values; positive power means absorption under the passive sign convention.',
+      'Current is referenced into the positive-voltage terminal. AC phase, power factor and time-varying waveforms are outside this DC model.',
     ],
     keywords: ['dc', 'watts', 'voltage', 'current'],
   );
@@ -105,7 +106,7 @@ CalculatorDefinition createElectricalEnergyDefinition() {
     solve: (v) =>
         ElectricalEnergy.calculate(power: v[power.id]!, time: v[time.id]!),
     substitution: (v) =>
-        'E = ${NumberFormatting.format(v[power.id]!)} W × ${NumberFormatting.format(v[time.id]!)} s',
+        'E = ${NumberFormatting.operand(v[power.id]!)} W × ${NumberFormatting.operand(v[time.id]!)} s',
     explanation: (v, result) =>
         'The device uses $result J during this interval. Wh and kWh describe the same energy, not power.',
     alternateUnits: [EngineeringUnit.wattHour, EngineeringUnit.kilowattHour],
@@ -121,6 +122,7 @@ CalculatorDefinition createElectricalEnergyDefinition() {
     modes: [mode0],
     assumptions: [
       'Assumes constant, nonnegative power over the time interval.',
+      'The result is energy, not power. Time-varying consumption and electricity tariffs are not calculated.',
     ],
     keywords: ['electricity', 'consumption', 'kwh', 'duration'],
   );
@@ -171,7 +173,7 @@ CalculatorDefinition createVoltageDividerDefinition() {
       r2: v[r2.id]!,
     ),
     substitution: (v) =>
-        'Vout = ${NumberFormatting.format(v[voltage.id]!)} V × ${NumberFormatting.format(v[r2.id]!)} Ω / (${NumberFormatting.format(v[r1.id]!)} Ω + ${NumberFormatting.format(v[r2.id]!)} Ω)',
+        'Vout = ${NumberFormatting.operand(v[voltage.id]!)} V × ${NumberFormatting.operand(v[r2.id]!)} Ω / (${NumberFormatting.operand(v[r1.id]!)} Ω + ${NumberFormatting.operand(v[r2.id]!)} Ω)',
     explanation: (v, result) =>
         'The unloaded output is $result V. Connecting a load changes the equivalent lower resistance.',
     alternateUnits: [],
@@ -189,6 +191,7 @@ CalculatorDefinition createVoltageDividerDefinition() {
     modes: [mode0],
     assumptions: [
       'Assumes an unloaded, ideal two-resistor divider; output is measured across R2.',
+      'The resistor ratio sets the ideal output. A connected load, source resistance and resistor tolerances can change it; these effects are not included.',
     ],
     keywords: ['divider', 'resistors', 'voltage', 'output'],
   );

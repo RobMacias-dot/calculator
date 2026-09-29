@@ -124,13 +124,28 @@ abstract final class QuadraticEquation {
       nonZero: {'a'},
     );
     if (issues.isNotEmpty) return CalculationFailure(issues);
-    final scale = math.max(a.abs(), math.max(b.abs(), c.abs()));
+    final largest = math.max(a.abs(), math.max(b.abs(), c.abs()));
+    // A binary scale preserves coefficient significands. Dividing by an
+    // arbitrary maximum can turn an exact repeated root into two roots.
+    // Clamp the exponent so the scale remains finite and normal, even for
+    // subnormal inputs. An adjacent exponent from log rounding is also safe.
+    final exponent = (math.log(largest) / math.ln2).floor().clamp(-1022, 1023);
+    final scale = math.pow(2.0, exponent).toDouble();
     final aa = a / scale, bb = b / scale, cc = c / scale;
     if (aa == 0 || (bb == 0 && b != 0) || (cc == 0 && c != 0)) return _range();
     final square = bb * bb;
     final product = 4 * aa * cc;
     if ((square == 0 && bb != 0) || (product == 0 && cc != 0)) return _range();
-    final discriminant = square - product;
+    // Below this bound the product-error transform cannot guarantee that its
+    // residual is representable. Equal rounded products cannot certify D=0.
+    if (square == product && square != 0 && square < math.pow(2.0, -969)) {
+      return _range();
+    }
+    // Recover product rounding errors before subtracting nearly equal terms.
+    // The normalized operands keep Dekker's splits safely below overflow.
+    final discriminant =
+        (square - product) +
+        (_productError(bb, bb, square) - _productError(4 * aa, cc, product));
     if (discriminant < 0) {
       final real = -bb / (2 * aa);
       final imaginary = math.sqrt(-discriminant) / (2 * aa.abs());
@@ -169,6 +184,16 @@ abstract final class QuadraticEquation {
         0,
       ),
     );
+  }
+
+  // Dekker's binary64 product residual (split = 2^27 + 1). Keep the ordered
+  // operations: reassociation would discard the low components again.
+  static double _productError(double x, double y, double product) {
+    const split = 134217729.0;
+    final sx = split * x, sy = split * y;
+    final hx = sx + (x - sx), hy = sy + (y - sy);
+    final lx = x - hx, ly = y - hy;
+    return (((hx * hy - product) + hx * ly) + hy * lx) + lx * ly;
   }
 
   static CalculationFailure<QuadraticRoots> _range() => calculationFailure(

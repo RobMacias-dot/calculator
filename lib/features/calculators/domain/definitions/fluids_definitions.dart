@@ -25,7 +25,7 @@ CalculatorDefinition createFlowDefinition() {
     solve: (v) =>
         VolumetricFlow.area(area: v[area.id]!, velocity: v[velocity.id]!),
     substitution: (v) =>
-        'Q = ${NumberFormatting.format(v[area.id]!)} m² × ${NumberFormatting.format(v[velocity.id]!)} m/s',
+        'Q = ${NumberFormatting.operand(v[area.id]!)} m² × ${NumberFormatting.operand(v[velocity.id]!)} m/s',
     explanation: (v, result) =>
         'The signed volume crossing the section each second is $result m³.',
     alternateUnits: [
@@ -75,7 +75,7 @@ CalculatorDefinition createPipeFlowDefinition() {
       velocity: v[velocity.id]!,
     ),
     substitution: (v) =>
-        'Q = π × (${NumberFormatting.format(v[diameter.id]!)} m)² / 4 × ${NumberFormatting.format(v[velocity.id]!)} m/s',
+        'Q = π × (${NumberFormatting.operand(v[diameter.id]!)} m)² / 4 × ${NumberFormatting.operand(v[velocity.id]!)} m/s',
     explanation: (v, result) =>
         'The pipe transports $result m³ per second through its circular section.',
     alternateUnits: [
@@ -94,6 +94,7 @@ CalculatorDefinition createPipeFlowDefinition() {
     modes: [mode0],
     assumptions: [
       'Assumes a full circular pipe and mean axial velocity, not centreline velocity.',
+      'Uses the internal diameter to obtain flow area. It does not predict velocity from pressure drop or include pipe friction; signed velocity sets flow direction.',
     ],
     keywords: ['pipe', 'diameter', 'discharge'],
   );
@@ -121,7 +122,7 @@ CalculatorDefinition createHydrostaticDefinition() {
       depth: v[depth.id]!,
     ),
     substitution: (v) =>
-        'P = ${NumberFormatting.format(v[density.id]!)} kg/m³ × 9.80665 m/s² × ${NumberFormatting.format(v[depth.id]!)} m',
+        'P = ${NumberFormatting.operand(v[density.id]!)} kg/m³ × 9.80665 m/s² × ${NumberFormatting.operand(v[depth.id]!)} m',
     explanation: (v, result) =>
         'Pressure is $result Pa above the surface pressure. Add surface pressure separately for absolute pressure.',
     alternateUnits: [EngineeringUnit.kilopascal, EngineeringUnit.bar],
@@ -137,6 +138,7 @@ CalculatorDefinition createHydrostaticDefinition() {
     modes: [mode0],
     assumptions: [
       'Static fluid with constant density; g = 9.80665 m/s² (standard gravity). Reports pressure relative to the surface.',
+      'Depth is measured downward from the surface. Surface pressure is not included; the result alone is not absolute pressure.',
     ],
     keywords: ['hydrostatic', 'depth', 'pressure', 'liquid'],
   );
@@ -200,7 +202,7 @@ CalculatorDefinition createBernoulliDefinition() {
       height2: v[height2.id]!,
     ),
     substitution: (v) =>
-        'P2 = ${NumberFormatting.format(v[pressure1.id]!)} Pa + ½ × ${NumberFormatting.format(v[density.id]!)} kg/m³ × ((${NumberFormatting.format(v[speed1.id]!)} m/s)² − (${NumberFormatting.format(v[speed2.id]!)} m/s)²) + ${NumberFormatting.format(v[density.id]!)} kg/m³ × 9.80665 m/s² × (${NumberFormatting.format(v[height1.id]!)} − ${NumberFormatting.format(v[height2.id]!)}) m',
+        'P2 = ${NumberFormatting.operand(v[pressure1.id]!)} Pa + ½ × ${NumberFormatting.operand(v[density.id]!)} kg/m³ × ((${NumberFormatting.operand(v[speed1.id]!)} m/s)² − (${NumberFormatting.operand(v[speed2.id]!)} m/s)²) + ${NumberFormatting.operand(v[density.id]!)} kg/m³ × 9.80665 m/s² × (${NumberFormatting.operand(v[height1.id]!)} − ${NumberFormatting.operand(v[height2.id]!)}) m',
     explanation: (v, result) =>
         'The model predicts $result Pa in the same pressure reference as P1. It does not account for cavitation, friction or energy added by machinery.',
     alternateUnits: [EngineeringUnit.kilopascal],
@@ -218,6 +220,7 @@ CalculatorDefinition createBernoulliDefinition() {
     assumptions: [
       'Assumes steady, incompressible, inviscid flow along the same streamline, with no pumps, turbines or friction losses.',
       'Uses g = 9.80665 m/s². Both pressures share the same reference; signed gauge pressures are allowed.',
+      'Pressure, kinetic and elevation terms exchange along the streamline. Use one elevation datum for both stations; the result does not check cavitation or whether the assumed flow can be sustained.',
     ],
     keywords: ['bernoulli', 'streamline', 'pressure', 'fluid'],
   );

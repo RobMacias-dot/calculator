@@ -5,6 +5,11 @@ import 'reynolds_cases.dart';
 import 'ideal_gas_cases.dart';
 import 'ipv4_cases.dart';
 import 'phase4_cases.dart';
+import 'content_consistency_cases.dart';
+import 'metamorphic_cases.dart';
+import 'quadratic_stress_cases.dart';
+import 'equivalence_cases.dart';
+import 'boundary_cases.dart';
 
 Map<String, void Function()> allCalculationCases() => {
   ...foundationCases(),
@@ -14,4 +19,9 @@ Map<String, void Function()> allCalculationCases() => {
   ...idealGasCases(),
   ...ipv4Cases(),
   ...phase4Cases(),
+  ...contentConsistencyCases(),
+  ...metamorphicCases(),
+  ...quadraticStressCases(),
+  ...equivalenceCases(),
+  ...boundaryCases(),
 };

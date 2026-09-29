@@ -63,6 +63,10 @@ CalculatorDefinition createIpv4Definition() {
     explanation: 'A CIDR prefix identifies the network bits of a 32-bit IPv4 address. Host rules depend on the prefix.',
     inputs: inputs,
     modes: [mode],
+    assumptions: [
+      'Counts use the traditional network/broadcast exclusions for /0–/30, both endpoints for /31 point-to-point links, and one address for /32.',
+      'This is subnet arithmetic. Reserved or special-purpose addresses are not necessarily assignable or publicly routable; the calculator does not check network configuration.',
+    ],
     keywords: ['ip', 'cidr', 'subnet', 'mask', 'broadcast', 'hosts'],
   );
 }

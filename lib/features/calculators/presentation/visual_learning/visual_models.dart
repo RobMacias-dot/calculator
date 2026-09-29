@@ -33,7 +33,7 @@ final class IdealGasVisualizationModel extends VisualModel {
   final double motionIntensity;
 
   String label(GasVariable variable) =>
-      '${variable == inputs.solved ? report.formattedValue : NumberFormatting.format(values[variable]!)} ${gasUnit(variable).symbol}';
+      '${variable == inputs.solved ? report.formattedValue : NumberFormatting.operand(values[variable]!)} ${gasUnit(variable).symbol}';
 }
 
 EngineeringUnit gasUnit(GasVariable variable) => switch (variable) {
@@ -77,7 +77,7 @@ abstract final class IdealGasVisualizationMapper {
     // readable minimum even for very small valid gas states. Never domain limits.
     return IdealGasVisualizationModel(
       report,
-      'Ideal gas visualization. ${GasVariable.values.map((v) => '${v.name} ${NumberFormatting.format(values[v]!)} ${gasUnit(v).symbol}').join(', ')}. '
+      'Ideal gas visualization. ${GasVariable.values.map((v) => '${v.name} ${v == context.solved ? report.formattedValue : NumberFormatting.operand(values[v]!)} ${gasUnit(v).symbol}').join(', ')}. '
       'Calculated ${context.solved.name}. Higher temperature is represented by faster particle motion. '
       'Piston size, particle count, speed and arrangement are illustrative.',
       context,
@@ -194,7 +194,7 @@ double _displayMagnitude(double value, double ceiling) =>
     (math.log(1 + value.abs()) / math.log(1 + ceiling)).clamp(0.0, 1.0);
 
 String quantityLabel(CalculatedInput input) =>
-    '${NumberFormatting.format(input.baseValue)}${input.baseUnit.symbol.isEmpty ? '' : ' ${input.baseUnit.symbol}'}';
+    '${NumberFormatting.operand(input.baseValue)}${input.baseUnit.symbol.isEmpty ? '' : ' ${input.baseUnit.symbol}'}';
 
 /// Maps only successful reports. Never parses user text, reruns a solver or
 /// reverse-parses rounded presentation strings. Clamping is visual only.

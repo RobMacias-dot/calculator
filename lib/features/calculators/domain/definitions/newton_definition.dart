@@ -36,9 +36,9 @@ CalculatorDefinition createNewtonDefinition() {
       acceleration: values[acceleration.id]!,
     ),
     substitution: (values) =>
-        'F = ${NumberFormatting.format(values[mass.id]!)} kg × ${NumberFormatting.format(values[acceleration.id]!)} m/s²',
+        'F = ${NumberFormatting.operand(values[mass.id]!)} kg × ${NumberFormatting.operand(values[acceleration.id]!)} m/s²',
     explanation: (values, result) =>
-        'A mass of ${NumberFormatting.format(values[mass.id]!)} kg with acceleration ${NumberFormatting.format(values[acceleration.id]!)} m/s² has a net force of $result N. The sign indicates direction along the chosen axis.',
+        'A mass of ${NumberFormatting.operand(values[mass.id]!)} kg with acceleration ${NumberFormatting.operand(values[acceleration.id]!)} m/s² has a net force of $result N. The sign indicates direction along the chosen axis.',
   );
   return CalculatorDefinition(
     id: 'newtons-second-law',
@@ -50,6 +50,10 @@ CalculatorDefinition createNewtonDefinition() {
     explanation: 'Net force is the product of constant mass and acceleration in an inertial frame.',
     inputs: mode.inputs,
     modes: [mode],
+    assumptions: [
+      'Classical motion with constant mass in an inertial frame. The result is the net force along the chosen axis, not an individual applied force.',
+      'Gravity, friction and other forces are not added separately here; their combined effect is represented by the entered acceleration.',
+    ],
     keywords: ['force', 'mass', 'acceleration', 'newton'],
   );
 }

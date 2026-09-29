@@ -106,16 +106,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               style: theme.textTheme.bodyLarge,
             ),
             const SizedBox(height: AppSpacing.lg),
-            if (widget.definition.assumptions.isNotEmpty) ...[
-              Text('Assumptions', style: theme.textTheme.titleMedium),
-              const SizedBox(height: AppSpacing.sm),
-              for (final assumption in widget.definition.assumptions)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: Text(assumption),
-                ),
-              const SizedBox(height: AppSpacing.md),
-            ],
             GlassCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -234,6 +224,35 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 },
                 icon: const Icon(Icons.tune_rounded),
                 label: const Text('Explore interactively'),
+              ),
+            ],
+            if (widget.definition.assumptions.isNotEmpty ||
+                _viewModel.mode.assumptions.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              GlassCard(
+                child: ExpansionTile(
+                  // Reset disclosure when changing mode; content never captures
+                  // a previous selection or depends on a numeric result.
+                  key: ValueKey('engineering-context-${_viewModel.mode.id}'),
+                  tilePadding: EdgeInsets.zero,
+                  childrenPadding: const EdgeInsets.only(top: AppSpacing.md),
+                  expansionAnimationStyle: AnimationStyle.noAnimation,
+                  title: const Text('Engineering context'),
+                  subtitle: const Text('Model assumptions and limitations'),
+                  children: [
+                    for (final note in [
+                      ...widget.definition.assumptions,
+                      ..._viewModel.mode.assumptions,
+                    ])
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                        child: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Text(note),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ],
           ],

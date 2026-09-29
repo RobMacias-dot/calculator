@@ -32,7 +32,7 @@ CalculatorDefinition createTorqueDefinition() {
     unit: EngineeringUnit.newtonMetre,
     solve: (v) => Torque.calculate(force: v[force.id]!, radius: v[radius.id]!),
     substitution: (v) =>
-        'τ = ${NumberFormatting.format(v[force.id]!)} N × ${NumberFormatting.format(v[radius.id]!)} m',
+        'τ = ${NumberFormatting.operand(v[force.id]!)} N × ${NumberFormatting.operand(v[radius.id]!)} m',
     explanation: (v, result) =>
         'This force produces a turning moment of $result N·m about the pivot.',
     alternateUnits: [],
@@ -76,7 +76,7 @@ CalculatorDefinition createWorkDefinition() {
       distance: v[distance.id]!,
     ),
     substitution: (v) =>
-        'W = ${NumberFormatting.format(v[force.id]!)} N × ${NumberFormatting.format(v[distance.id]!)} m',
+        'W = ${NumberFormatting.operand(v[force.id]!)} N × ${NumberFormatting.operand(v[distance.id]!)} m',
     explanation: (v, result) =>
         'The force transfers $result J over this displacement; negative work removes mechanical energy.',
     alternateUnits: [],
@@ -121,7 +121,7 @@ CalculatorDefinition createMechanicalPowerDefinition() {
     solve: (v) =>
         MechanicalPower.calculate(work: v[work.id]!, time: v[time.id]!),
     substitution: (v) =>
-        'P = ${NumberFormatting.format(v[work.id]!)} J / ${NumberFormatting.format(v[time.id]!)} s',
+        'P = ${NumberFormatting.operand(v[work.id]!)} J / ${NumberFormatting.operand(v[time.id]!)} s',
     explanation: (v, result) =>
         'Work is transferred at an average rate of $result W during this interval.',
     alternateUnits: [EngineeringUnit.kilowatt],
@@ -162,9 +162,9 @@ CalculatorDefinition createKineticEnergyDefinition() {
     solve: (v) =>
         KineticEnergy.calculate(mass: v[mass.id]!, speed: v[speed.id]!),
     substitution: (v) =>
-        'KE = ½ × ${NumberFormatting.format(v[mass.id]!)} kg × (${NumberFormatting.format(v[speed.id]!)} m/s)²',
+        'KE = ½ × ${NumberFormatting.operand(v[mass.id]!)} kg × (${NumberFormatting.operand(v[speed.id]!)} m/s)²',
     explanation: (v, result) =>
-        'A ${NumberFormatting.format(v[mass.id]!)} kg object moving at ${NumberFormatting.format(v[speed.id]!)} m/s has $result J of kinetic energy.',
+        'A ${NumberFormatting.operand(v[mass.id]!)} kg object moving at ${NumberFormatting.operand(v[speed.id]!)} m/s has $result J of kinetic energy.',
     alternateUnits: [],
   );
   return CalculatorDefinition(
@@ -203,7 +203,7 @@ CalculatorDefinition createMomentumDefinition() {
     solve: (v) =>
         Momentum.calculate(mass: v[mass.id]!, velocity: v[velocity.id]!),
     substitution: (v) =>
-        'p = ${NumberFormatting.format(v[mass.id]!)} kg × ${NumberFormatting.format(v[velocity.id]!)} m/s',
+        'p = ${NumberFormatting.operand(v[mass.id]!)} kg × ${NumberFormatting.operand(v[velocity.id]!)} m/s',
     explanation: (v, result) =>
         'The object has $result kg·m/s of momentum. Its sign follows the selected positive axis.',
     alternateUnits: [],

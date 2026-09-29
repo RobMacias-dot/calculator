@@ -191,7 +191,7 @@ void main() {
             textScale: 2,
           );
           if (registry.byId(sample.id)!.assumptions.isNotEmpty) {
-            expect(find.text('Assumptions'), findsOneWidget);
+            expect(find.text('Engineering context'), findsOneWidget);
           }
           expect(find.text('Unit: '), findsNothing);
           for (final entry in sample.values.entries) {

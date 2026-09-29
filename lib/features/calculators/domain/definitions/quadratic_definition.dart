@@ -37,8 +37,12 @@ CalculatorDefinition createQuadraticDefinition() {
         return CalculationFailure(issues);
       }
       final roots = (solved as CalculationSuccess<QuadraticRoots>).value;
-      final first = NumberFormatting.format(roots.firstReal);
-      final second = NumberFormatting.format(roots.secondReal);
+      var first = NumberFormatting.format(roots.firstReal);
+      var second = NumberFormatting.format(roots.secondReal);
+      if (roots.kind == QuadraticRootKind.twoReal && first == second) {
+        first = NumberFormatting.operand(roots.firstReal);
+        second = NumberFormatting.operand(roots.secondReal);
+      }
       final imaginary = NumberFormatting.format(roots.imaginaryMagnitude);
       final displayed = switch (roots.kind) {
         QuadraticRootKind.twoReal => 'x1 = $first\nx2 = $second',
@@ -52,7 +56,7 @@ CalculatorDefinition createQuadraticDefinition() {
           resultLabel: 'Roots',
           formula: formula,
           substitution:
-              '(${NumberFormatting.format(v['a']!)})x² + (${NumberFormatting.format(v['b']!)})x + (${NumberFormatting.format(v['c']!)}) = 0',
+              '(${NumberFormatting.operand(v['a']!)})x² + (${NumberFormatting.operand(v['b']!)})x + (${NumberFormatting.operand(v['c']!)}) = 0',
           explanation: switch (roots.kind) {
             QuadraticRootKind.twoReal => 'The discriminant is positive: the parabola crosses the x-axis at two real roots.',
             QuadraticRootKind.repeated => 'The discriminant is zero: the parabola touches the x-axis at one repeated real root.',
@@ -73,6 +77,7 @@ CalculatorDefinition createQuadraticDefinition() {
     modes: [mode],
     assumptions: [
       'Real coefficients with a ≠ 0. Results use finite floating-point arithmetic.',
+      'Roots close to a repeated root can be sensitive to small coefficient changes. A supported numeric result describes the entered polynomial, not measurement uncertainty; some extreme ranges cannot be resolved.',
     ],
     keywords: ['quadratic', 'polynomial', 'roots', 'complex', 'discriminant'],
   );

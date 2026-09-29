@@ -49,7 +49,9 @@ class ResistorMode extends CalculatorMode {
       return CalculationFailure(issues);
     }
     final value = (solved as CalculationSuccess<double>).value;
-    final terms = values.map((r) => '${NumberFormatting.format(r)} Ω').toList();
+    final terms = values
+        .map((r) => '${NumberFormatting.operand(r)} Ω')
+        .toList();
     return CalculationSuccess(
       CalculationResult(
         value: value,

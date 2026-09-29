@@ -19,6 +19,7 @@ CalculatorMode numericMode({
   required String Function(NormalizedValues) substitution,
   required String Function(NormalizedValues, String) explanation,
   List<String> warnings = const [],
+  List<String> assumptions = const [],
   List<EngineeringUnit> alternateUnits = const [],
   CalculationContext Function(NormalizedValues)? context,
 }) {
@@ -40,6 +41,7 @@ CalculatorMode numericMode({
     label: label,
     formula: formula,
     inputs: fields,
+    assumptions: assumptions,
     calculate: (raw, units) {
       final parsed = parseNumericInputs(fields, raw, units);
       if (parsed case CalculationFailure<Map<String, double>>(:final issues)) {

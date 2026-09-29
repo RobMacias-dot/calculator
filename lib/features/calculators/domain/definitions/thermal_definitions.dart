@@ -38,7 +38,7 @@ CalculatorDefinition createSensibleHeatDefinition() {
       temperatureChange: v[temperatureChange.id]!,
     ),
     substitution: (v) =>
-        'Q = ${NumberFormatting.format(v[mass.id]!)} kg × ${NumberFormatting.format(v[specificHeat.id]!)} J/(kg·K) × ${NumberFormatting.format(v[temperatureChange.id]!)} K',
+        'Q = ${NumberFormatting.operand(v[mass.id]!)} kg × ${NumberFormatting.operand(v[specificHeat.id]!)} J/(kg·K) × ${NumberFormatting.operand(v[temperatureChange.id]!)} K',
     explanation: (v, result) =>
         'The material exchanges $result J. Positive heat warms it; negative heat corresponds to cooling.',
     alternateUnits: [EngineeringUnit.kilojoule],
@@ -79,9 +79,9 @@ CalculatorDefinition createThermalEfficiencyDefinition() {
     solve: (v) =>
         ThermalEfficiency.calculate(work: v[work.id]!, heat: v[heat.id]!),
     substitution: (v) =>
-        'η = ${NumberFormatting.format(v[work.id]!)} J / ${NumberFormatting.format(v[heat.id]!)} J',
+        'η = ${NumberFormatting.operand(v[work.id]!)} J / ${NumberFormatting.operand(v[heat.id]!)} J',
     explanation: (v, result) =>
-        'A fraction $result of the supplied heat becomes useful work; the percentage is shown below.',
+        'A fraction $result of the supplied heat becomes useful work; the equivalent percentage is included in the result details.',
     alternateUnits: [EngineeringUnit.percent],
   );
   return CalculatorDefinition(
@@ -95,6 +95,7 @@ CalculatorDefinition createThermalEfficiencyDefinition() {
     modes: [mode0],
     assumptions: [
       'Heat-engine convention: 0 ≤ Wout ≤ Qin and Qin > 0; this is not a heat-pump coefficient of performance.',
+      'Compare net useful work and supplied heat for the same cycle or interval. The ratio alone does not establish thermodynamic feasibility or a Carnot limit.',
     ],
     keywords: ['efficiency', 'heat engine', 'ratio'],
   );
@@ -118,7 +119,7 @@ CalculatorDefinition createTemperatureDefinition() {
     unit: EngineeringUnit.kelvin,
     solve: (v) => AbsoluteTemperature.kelvin(v[temperature.id]!),
     substitution: (v) =>
-        'T = ${NumberFormatting.format(v[temperature.id]!)} K (after conversion to the absolute scale)',
+        'T = ${NumberFormatting.operand(v[temperature.id]!)} K (after conversion to the absolute scale)',
     explanation: (v, result) =>
         'The same physical temperature is $result K; Celsius and Fahrenheit use different zero points.',
     alternateUnits: [EngineeringUnit.celsius, EngineeringUnit.fahrenheit],
@@ -174,7 +175,7 @@ CalculatorDefinition createExpansionDefinition() {
       temperatureChange: v[temperatureChange.id]!,
     ),
     substitution: (v) =>
-        'ΔL = ${NumberFormatting.format(v[coefficient.id]!)} /K × ${NumberFormatting.format(v[length.id]!)} m × ${NumberFormatting.format(v[temperatureChange.id]!)} K',
+        'ΔL = ${NumberFormatting.operand(v[coefficient.id]!)} /K × ${NumberFormatting.operand(v[length.id]!)} m × ${NumberFormatting.operand(v[temperatureChange.id]!)} K',
     explanation: (v, result) =>
         'The estimated length change is $result m. Add it to the initial length; a negative result denotes contraction.',
     alternateUnits: [EngineeringUnit.millimetre],
@@ -190,6 +191,7 @@ CalculatorDefinition createExpansionDefinition() {
     modes: [mode0],
     assumptions: [
       'Linear approximation with constant expansion coefficient and small strain. Δ1 °C = Δ1 K; negative coefficients are allowed for materials that contract on heating.',
+      'Use a coefficient appropriate to the material and entered temperature interval. ΔT is final minus initial temperature; phase changes, varying coefficients and restraint stresses are outside the model.',
     ],
     keywords: ['expansion', 'thermal', 'length', 'coefficient'],
   );

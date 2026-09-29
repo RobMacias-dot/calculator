@@ -45,13 +45,17 @@ CalculatorDefinition createPercentageDefinition() {
     solve: (v) =>
         Percentages.ofValue(percent: v[percent.id]!, value: v[value.id]!),
     substitution: (v) =>
-        'Result = ${NumberFormatting.format(v[percent.id]!)} × ${NumberFormatting.format(v[value.id]!)}',
+        'Result = ${NumberFormatting.operand(v[percent.id]!)} × ${NumberFormatting.operand(v[value.id]!)}',
     explanation: (v, result) =>
         'The selected fraction of the original quantity is $result.',
     alternateUnits: [],
   );
   final mode1 = numericMode(
     id: 'change',
+    assumptions: [
+      'Percentage change divides by the signed initial value, which must be nonzero. With a negative starting value, the sign is not the usual growth/decline interpretation for a positive baseline.',
+      'Compare quantities in the same units. A change between two percentages is relative change here, not a difference in percentage points.',
+    ],
     label: 'Percentage change',
     formula: 'Change = (final − initial) / initial × 100',
     inputs: [initial, finalValue],
@@ -61,20 +65,23 @@ CalculatorDefinition createPercentageDefinition() {
       finalValue: v[finalValue.id]!,
     ),
     substitution: (v) =>
-        'Change = (${NumberFormatting.format(v[finalValue.id]!)} − ${NumberFormatting.format(v[initial.id]!)}) / ${NumberFormatting.format(v[initial.id]!)} × 100%',
+        'Change = (${NumberFormatting.operand(v[finalValue.id]!)} − ${NumberFormatting.operand(v[initial.id]!)}) / ${NumberFormatting.operand(v[initial.id]!)} × 100%',
     explanation: (v, result) =>
         'The relative change is $result% using the signed initial value as the reference.',
     alternateUnits: [],
   );
   final mode2 = numericMode(
     id: 'ratio',
+    assumptions: [
+      'The whole is a nonzero reference in the same units as the part. Signed values and percentages above 100% are allowed; the calculator does not require the part to be a physical subset.',
+    ],
     label: 'X is what % of Y',
     formula: 'Percentage = X / Y × 100',
     inputs: [part, whole],
     unit: EngineeringUnit.percent,
     solve: (v) => Percentages.ratio(part: v[part.id]!, whole: v[whole.id]!),
     substitution: (v) =>
-        'Percentage = ${NumberFormatting.format(v[part.id]!)} / ${NumberFormatting.format(v[whole.id]!)} × 100%',
+        'Percentage = ${NumberFormatting.operand(v[part.id]!)} / ${NumberFormatting.operand(v[whole.id]!)} × 100%',
     explanation: (v, result) =>
         'The part represents $result% of the specified whole.',
     alternateUnits: [],
@@ -88,9 +95,6 @@ CalculatorDefinition createPercentageDefinition() {
     explanation: 'Calculate a share, relative change or percentage.',
     inputs: mode0.inputs,
     modes: [mode0, mode1, mode2],
-    assumptions: [
-      'Percentage change divides by the signed initial value, which must be nonzero.',
-    ],
     keywords: ['percent', 'percentage', 'change', 'ratio'],
   );
 }
@@ -119,7 +123,7 @@ CalculatorDefinition createPythagoreanDefinition() {
     unit: EngineeringUnit.metre,
     solve: (v) => Pythagoras.hypotenuse(a: v[a.id]!, b: v[b.id]!),
     substitution: (v) =>
-        'c = √((${NumberFormatting.format(v[a.id]!)} m)² + (${NumberFormatting.format(v[b.id]!)} m)²)',
+        'c = √((${NumberFormatting.operand(v[a.id]!)} m)² + (${NumberFormatting.operand(v[b.id]!)} m)²)',
     explanation: (v, result) =>
         'The side opposite the right angle is $result m long.',
     alternateUnits: [],
@@ -133,7 +137,7 @@ CalculatorDefinition createPythagoreanDefinition() {
     solve: (v) =>
         Pythagoras.leg(c: v[c.id]!, knownLeg: v[b.id]!, fieldId: b.id),
     substitution: (v) =>
-        'a = √((${NumberFormatting.format(v[c.id]!)} m)² − (${NumberFormatting.format(v[b.id]!)} m)²)',
+        'a = √((${NumberFormatting.operand(v[c.id]!)} m)² − (${NumberFormatting.operand(v[b.id]!)} m)²)',
     explanation: (v, result) =>
         'The missing perpendicular leg is $result m long.',
     alternateUnits: [],
@@ -147,7 +151,7 @@ CalculatorDefinition createPythagoreanDefinition() {
     solve: (v) =>
         Pythagoras.leg(c: v[c.id]!, knownLeg: v[a.id]!, fieldId: a.id),
     substitution: (v) =>
-        'b = √((${NumberFormatting.format(v[c.id]!)} m)² − (${NumberFormatting.format(v[a.id]!)} m)²)',
+        'b = √((${NumberFormatting.operand(v[c.id]!)} m)² − (${NumberFormatting.operand(v[a.id]!)} m)²)',
     explanation: (v, result) =>
         'The missing perpendicular leg is $result m long.',
     alternateUnits: [],
@@ -196,7 +200,7 @@ CalculatorDefinition createVectorDefinition() {
     unit: EngineeringUnit.dimensionless,
     solve: (v) => VectorMagnitude.calculate(x: v[x.id]!, y: v[y.id]!),
     substitution: (v) =>
-        '|v| = √((${NumberFormatting.format(v[x.id]!)})² + (${NumberFormatting.format(v[y.id]!)})²)',
+        '|v| = √((${NumberFormatting.operand(v[x.id]!)})² + (${NumberFormatting.operand(v[y.id]!)})²)',
     explanation: (v, result) =>
         'The vector has length $result, independent of the signs of its components.',
     alternateUnits: [],
@@ -215,7 +219,7 @@ CalculatorDefinition createVectorDefinition() {
     solve: (v) =>
         VectorMagnitude.calculate(x: v[x.id]!, y: v[y.id]!, z: v[z.id]!),
     substitution: (v) =>
-        '|v| = √((${NumberFormatting.format(v[x.id]!)})² + (${NumberFormatting.format(v[y.id]!)})² + (${NumberFormatting.format(v[z.id]!)})²)',
+        '|v| = √((${NumberFormatting.operand(v[x.id]!)})² + (${NumberFormatting.operand(v[y.id]!)})² + (${NumberFormatting.operand(v[z.id]!)})²)',
     explanation: (v, result) =>
         'The vector has length $result in the same units as its three components.',
     alternateUnits: [],

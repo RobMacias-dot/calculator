@@ -41,7 +41,7 @@ CalculatorDefinition createReynoldsDefinition() {
     minimumExclusive: true,
   );
   String f(NormalizedValues values, CalculatorInput input) =>
-      NumberFormatting.format(values[input.id]!);
+      NumberFormatting.operand(values[input.id]!);
   final mode = numericMode(
     id: 'reynolds',
     label: 'Reynolds number (Re)',
@@ -75,6 +75,10 @@ CalculatorDefinition createReynoldsDefinition() {
     explanation: 'Uses density, speed, characteristic length and dynamic viscosity in SI units.',
     inputs: mode.inputs,
     modes: [mode],
+    assumptions: [
+      'Compares inertial and viscous effects using density and dynamic viscosity at the flow conditions. Enter speed magnitude and a characteristic length appropriate to the geometry.',
+      'For full circular pipe flow, use mean speed and internal diameter. Other geometries require their own length and speed conventions; there is no universal laminar/turbulent threshold.',
+    ],
     keywords: ['fluid', 'viscosity', 'density', 'flow'],
   );
 }
