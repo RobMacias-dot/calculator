@@ -226,6 +226,7 @@ CalculatorDefinition createVectorDefinition() {
   );
   return CalculatorDefinition(
     id: 'vector-magnitude',
+    supportsPlayground: true,
     supportsVisualLearning: true,
     name: 'Vector Magnitude',
     description: 'Find the Euclidean length of a 2D or 3D vector.',

@@ -42,6 +42,7 @@ CalculatorDefinition createNewtonDefinition() {
   );
   return CalculatorDefinition(
     id: 'newtons-second-law',
+    supportsPlayground: true,
     supportsVisualLearning: true,
     name: 'Newton’s Second Law',
     description: 'Connect mass and acceleration to net force.',

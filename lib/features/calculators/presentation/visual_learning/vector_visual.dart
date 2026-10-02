@@ -10,9 +10,15 @@ import 'visual_models.dart';
 import 'visual_scene.dart';
 
 class VectorVisual extends StatelessWidget {
-  const VectorVisual({super.key, required this.model, required this.viewModel});
+  const VectorVisual({
+    super.key,
+    required this.model,
+    required this.viewModel,
+    this.showInputControls = true,
+  });
   final VectorVisualModel model;
   final CalculatorViewModel viewModel;
+  final bool showInputControls;
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +54,16 @@ class VectorVisual extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         const Text(
           'The diagram automatically fits the largest component. '
-          'Very small components may be too short to see; their values remain below.',
+          'Very small components may be too short to see; use the numeric component values.',
         ),
-        for (final component in model.inputs.components)
-          VisualInputControl(
-            input: component,
-            viewModel: viewModel,
-            minimum: -10,
-            maximum: 10,
-          ),
+        if (showInputControls)
+          for (final component in model.inputs.components)
+            VisualInputControl(
+              input: component,
+              viewModel: viewModel,
+              minimum: -10,
+              maximum: 10,
+            ),
       ],
     );
   }

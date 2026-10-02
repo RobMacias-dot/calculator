@@ -29,6 +29,9 @@ const playgroundSamples = [
     id: 'ideal-gas-law',
     values: {'amount': '1', 'temperature': '300', 'volume': '.025'},
   ),
+  (id: 'newtons-second-law', values: {'mass': '2', 'acceleration': '-3'}),
+  (id: 'torque', values: {'force': '10', 'radius': '.5'}),
+  (id: 'vector-magnitude', values: {'x': '-3', 'y': '4'}),
 ];
 
 CalculatorViewModel playgroundVm(WidgetTester tester) =>
@@ -113,10 +116,12 @@ void expectSynchronized(WidgetTester tester) {
 
 void main() {
   test(
-    'registry alone enables exactly three Playgrounds and preserves catalog',
+    'registry alone enables exactly six Playgrounds and preserves catalog',
     () {
       final registry = createInitialCatalog();
       expect(registry.all.length, 30);
+      expect(registry.all.expand((d) => d.modes).length, 44);
+      expect(registry.all.map((d) => d.category).toSet().length, 6);
       expect(registry.all.where((d) => d.supportsVisualLearning).length, 8);
       expect(
         registry.all.where((d) => d.supportsPlayground).map((d) => d.id),
@@ -605,6 +610,17 @@ void main() {
             await fill(tester, sample.values);
             await expandReasoning(tester);
             expectSynchronized(tester);
+            await tester.ensureVisible(find.text('Engineering context'));
+            await tester.tap(find.text('Engineering context'));
+            await tester.pumpAndSettle();
+            for (final note in playgroundVm(tester).definition.assumptions) {
+              await tester.ensureVisible(find.text(note));
+              await tester.pump();
+              final rect = tester.getRect(find.text(note));
+              expect(rect.left, greaterThanOrEqualTo(0));
+              expect(rect.right, lessThanOrEqualTo(320));
+              expect(tester.takeException(), isNull);
+            }
             expect(
               find.byType(TextFormField),
               findsNWidgets(sample.values.length),

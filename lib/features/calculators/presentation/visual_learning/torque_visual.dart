@@ -9,9 +9,15 @@ import 'visual_models.dart';
 import 'visual_scene.dart';
 
 class TorqueVisual extends StatelessWidget {
-  const TorqueVisual({super.key, required this.model, required this.viewModel});
+  const TorqueVisual({
+    super.key,
+    required this.model,
+    required this.viewModel,
+    this.showInputControls = true,
+  });
   final TorqueVisualModel model;
   final CalculatorViewModel viewModel;
+  final bool showInputControls;
 
   @override
   Widget build(BuildContext context) {
@@ -50,18 +56,20 @@ class TorqueVisual extends StatelessWidget {
         ),
         if (model.report.value == 0)
           const Text('Zero torque: no turning effect in this model.'),
-        VisualInputControl(
-          input: model.inputs.force,
-          viewModel: viewModel,
-          minimum: 0,
-          maximum: 100,
-        ),
-        VisualInputControl(
-          input: model.inputs.radius,
-          viewModel: viewModel,
-          minimum: 0,
-          maximum: 5,
-        ),
+        if (showInputControls)
+          VisualInputControl(
+            input: model.inputs.force,
+            viewModel: viewModel,
+            minimum: 0,
+            maximum: 100,
+          ),
+        if (showInputControls)
+          VisualInputControl(
+            input: model.inputs.radius,
+            viewModel: viewModel,
+            minimum: 0,
+            maximum: 5,
+          ),
       ],
     );
   }

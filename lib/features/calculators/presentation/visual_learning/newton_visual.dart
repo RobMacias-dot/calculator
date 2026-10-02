@@ -9,9 +9,15 @@ import 'visual_models.dart';
 import 'visual_scene.dart';
 
 class NewtonVisual extends StatelessWidget {
-  const NewtonVisual({super.key, required this.model, required this.viewModel});
+  const NewtonVisual({
+    super.key,
+    required this.model,
+    required this.viewModel,
+    this.showInputControls = true,
+  });
   final NewtonVisualModel model;
   final CalculatorViewModel viewModel;
+  final bool showInputControls;
 
   @override
   Widget build(BuildContext context) {
@@ -59,18 +65,20 @@ class NewtonVisual extends StatelessWidget {
             'Zero mass is accepted by this calculator; it yields zero force for the supplied acceleration. '
             'This is an algebraic boundary, not a model of a physical massive object.',
           ),
-        VisualInputControl(
-          input: model.inputs.mass,
-          viewModel: viewModel,
-          minimum: 0,
-          maximum: 100,
-        ),
-        VisualInputControl(
-          input: model.inputs.acceleration,
-          viewModel: viewModel,
-          minimum: -20,
-          maximum: 20,
-        ),
+        if (showInputControls)
+          VisualInputControl(
+            input: model.inputs.mass,
+            viewModel: viewModel,
+            minimum: 0,
+            maximum: 100,
+          ),
+        if (showInputControls)
+          VisualInputControl(
+            input: model.inputs.acceleration,
+            viewModel: viewModel,
+            minimum: -20,
+            maximum: 20,
+          ),
       ],
     );
   }

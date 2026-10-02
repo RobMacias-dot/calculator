@@ -8,6 +8,7 @@ import 'calculator_input_field.dart';
 import 'calculator_mode_selector.dart';
 import 'calculator_view_model.dart';
 import 'result_card.dart';
+import 'engineering_context_card.dart';
 import 'visual_learning/visual_model_view.dart';
 import 'visual_learning/visual_models.dart';
 
@@ -144,8 +145,6 @@ class PlaygroundContent extends StatelessWidget {
                       live: true,
                     ),
                   ),
-                for (final assumption in viewModel.definition.assumptions)
-                  Text(assumption, style: theme.textTheme.bodySmall),
               ],
             ),
           ),
@@ -222,6 +221,14 @@ class PlaygroundContent extends StatelessWidget {
               ],
             ),
           ),
+          if (viewModel.definition.assumptions.isNotEmpty ||
+              viewModel.mode.assumptions.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            EngineeringContextCard(
+              definition: viewModel.definition,
+              mode: viewModel.mode,
+            ),
+          ],
         ],
       );
       return LayoutBuilder(

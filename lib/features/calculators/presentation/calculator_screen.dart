@@ -9,6 +9,7 @@ import 'calculator_mode_selector.dart';
 import 'calculator_input_field.dart';
 import 'calculator_view_model.dart';
 import 'result_card.dart';
+import 'engineering_context_card.dart';
 import 'favorite_button.dart';
 import 'visual_learning/visual_learning_sheet.dart';
 import '../../preferences/preferences_controller.dart';
@@ -229,30 +230,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             if (widget.definition.assumptions.isNotEmpty ||
                 _viewModel.mode.assumptions.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.md),
-              GlassCard(
-                child: ExpansionTile(
-                  // Reset disclosure when changing mode; content never captures
-                  // a previous selection or depends on a numeric result.
-                  key: ValueKey('engineering-context-${_viewModel.mode.id}'),
-                  tilePadding: EdgeInsets.zero,
-                  childrenPadding: const EdgeInsets.only(top: AppSpacing.md),
-                  expansionAnimationStyle: AnimationStyle.noAnimation,
-                  title: const Text('Engineering context'),
-                  subtitle: const Text('Model assumptions and limitations'),
-                  children: [
-                    for (final note in [
-                      ...widget.definition.assumptions,
-                      ..._viewModel.mode.assumptions,
-                    ])
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                        child: Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Text(note),
-                        ),
-                      ),
-                  ],
-                ),
+              EngineeringContextCard(
+                definition: widget.definition,
+                mode: _viewModel.mode,
               ),
             ],
           ],

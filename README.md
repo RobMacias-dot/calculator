@@ -2,11 +2,11 @@
 
 Una caja de herramientas de ingeniería, offline y extensible, para estudiantes y profesionales. **Calculate. Understand. Build.**
 
-## Estado: Phase 9 — Internal Release Candidate assessment
+## Estado: Phase 14 — Interactive Exploration Expansion
 
-Validación de release: **491/491 tests Flutter** (482 anteriores + 9 de hardening), **247/247 casos Dart y JavaScript/Node**, analyzer limpio y builds Android debug/profile/release/AAB. Smoke real en release, ejecución profile y persistencia tras detener/reiniciar el proceso Android. Se corrigió el registro de Recents al abrir Playgrounds directamente. [Phase 9 Release Candidate Validation](docs/phase9-validation.md) detalla cobertura, tamaños, permisos y límites: firma debug existente, TalkBack hablado/VoiceOver y rendimiento físico aún pendientes. No es una publicación ni un build listo para tienda.
+Validación automatizada: **562/562 tests Flutter**, **283/283 casos Dart y los mismos casos JavaScript/Node**, analyzer y formato limpios, APK y AAB release compilados. [Phase 14 Validation](docs/phase14-validation.md) documenta arquitectura, regresiones, aceptación nativa y límites. Se conserva la firma interna existente; no es una publicación ni un build listo para tienda.
 
-**30 calculadoras, ocho visualizaciones y tres Interactive Playgrounds:** Voltage Divider, IPv4/CIDR e Ideal Gas. `Explore interactively` abre una pantalla con entradas manuales, cálculo inmediato, resultado, escena y un panel de fórmula/sustitución/explicación. Comparte el ViewModel del formulario al entrar desde este; los enlaces directos tienen estado local. Conserva Learn visually, los motores y el registro único. No añade dependencias.
+**30 calculadoras, 44 modos, ocho visualizaciones y seis Interactive Playgrounds:** Voltage Divider, IPv4/CIDR, Ideal Gas, Newton’s Second Law, Torque y Vector Magnitude (2D/3D). `Explore interactively` abre una pantalla con entradas manuales, cálculo inmediato, resultado, escena y paneles de fórmula/sustitución/explicación y Engineering context. Comparte el ViewModel del formulario al entrar desde este; los enlaces directos tienen estado local y participan en Recents. Conserva Learn visually, los motores y el registro único. No añade dependencias.
 
 Baseline histórico de Phase 8: **482 tests Flutter** (459 anteriores + 23 nuevos), **247/247 casos de dominio** en Dart y JavaScript/Node, analyzer sin incidencias y APK debug compilado. [Arquitectura y validación de Phase 8](docs/phase8-validation.md). Se conserva el [informe de Phase 7](docs/phase7-validation.md).
 

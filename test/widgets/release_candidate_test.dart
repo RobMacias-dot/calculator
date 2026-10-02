@@ -89,6 +89,17 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.byType(PlaygroundScreen), findsOneWidget);
         expect(preferences.recents.firstOrNull?.id, sample.id);
+        await preferences.pendingWrites;
+        final writes = repository.writes;
+        // Rebuild, then open the same calculator through the direct-link back
+        // fallback. Neither should duplicate the most recent item or write.
+        await tester.pump();
+        await tester.ensureVisible(find.byTooltip('Back to calculator'));
+        await tester.tap(find.byTooltip('Back to calculator'));
+        await tester.pumpAndSettle();
+        await preferences.pendingWrites;
+        expect(repository.writes, writes);
+        expect(preferences.recents.where((d) => d.id == sample.id).length, 1);
       }
       await preferences.pendingWrites;
       await tester.pumpWidget(const SizedBox());
@@ -98,7 +109,7 @@ void main() {
       );
       expect(
         restored.recents.map((tool) => tool.id),
-        playgroundSamples.reversed.map((sample) => sample.id),
+        playgroundSamples.reversed.take(5).map((sample) => sample.id),
       );
       restored.dispose();
     },

@@ -39,6 +39,7 @@ CalculatorDefinition createTorqueDefinition() {
   );
   return CalculatorDefinition(
     id: 'torque',
+    supportsPlayground: true,
     name: 'Torque',
     supportsVisualLearning: true,
     description: 'Find turning moment from perpendicular force.',

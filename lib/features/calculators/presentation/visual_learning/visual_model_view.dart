@@ -32,8 +32,16 @@ class VisualModelView extends StatelessWidget {
         model: model,
         viewModel: viewModel,
       ),
-      NewtonVisualModel() => NewtonVisual(model: model, viewModel: viewModel),
-      TorqueVisualModel() => TorqueVisual(model: model, viewModel: viewModel),
+      NewtonVisualModel() => NewtonVisual(
+        model: model,
+        viewModel: viewModel,
+        showInputControls: showInputControls,
+      ),
+      TorqueVisualModel() => TorqueVisual(
+        model: model,
+        viewModel: viewModel,
+        showInputControls: showInputControls,
+      ),
       BernoulliVisualModel() => BernoulliVisual(
         model: model,
         viewModel: viewModel,
@@ -43,7 +51,11 @@ class VisualModelView extends StatelessWidget {
         model: model,
         viewModel: viewModel,
       ),
-      VectorVisualModel() => VectorVisual(model: model, viewModel: viewModel),
+      VectorVisualModel() => VectorVisual(
+        model: model,
+        viewModel: viewModel,
+        showInputControls: showInputControls,
+      ),
       ReynoldsVisualModel() => ReynoldsVisual(
         model: model,
         viewModel: viewModel,
