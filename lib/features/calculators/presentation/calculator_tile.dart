@@ -47,6 +47,20 @@ class CalculatorTile extends StatelessWidget {
                     color: theme.colorScheme.primary,
                   ),
                 ),
+                if (definition.supportsVisualLearning ||
+                    definition.supportsPlayground) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    [
+                      if (definition.supportsVisualLearning) 'Learn visually',
+                      if (definition.supportsPlayground)
+                        'Explore interactively',
+                    ].join(' · '),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

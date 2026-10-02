@@ -55,6 +55,6 @@ CalculatorDefinition createNewtonDefinition() {
       'Classical motion with constant mass in an inertial frame. The result is the net force along the chosen axis, not an individual applied force.',
       'Gravity, friction and other forces are not added separately here; their combined effect is represented by the entered acceleration.',
     ],
-    keywords: ['force', 'mass', 'acceleration', 'newton'],
+    keywords: ['force', 'mass', 'acceleration', 'newton', 'F=ma'],
   );
 }

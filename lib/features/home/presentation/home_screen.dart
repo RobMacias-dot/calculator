@@ -229,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     message:
                         vm.category != null && vm.section == HomeSection.tools
                         ? 'Try another field or clear your search to explore more tools.'
-                        : 'Try a field such as electrical, or a name such as Reynolds.',
+                        : 'Try a concept such as current or subnet, a tool name, or an engineering field.',
                     action: TextButton(
                       onPressed: () {
                         _search.clear();

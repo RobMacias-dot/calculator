@@ -168,7 +168,13 @@ CalculatorDefinition createPythagoreanDefinition() {
     assumptions: [
       'A nondegenerate right triangle with strictly positive side lengths; c is the hypotenuse.',
     ],
-    keywords: ['pythagoras', 'triangle', 'hypotenuse', 'geometry'],
+    keywords: [
+      'pythagoras',
+      'triangle',
+      'hypotenuse',
+      'geometry',
+      'missing leg',
+    ],
   );
 }
 

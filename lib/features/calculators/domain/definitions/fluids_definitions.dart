@@ -96,7 +96,7 @@ CalculatorDefinition createPipeFlowDefinition() {
       'Assumes a full circular pipe and mean axial velocity, not centreline velocity.',
       'Uses the internal diameter to obtain flow area. It does not predict velocity from pressure drop or include pipe friction; signed velocity sets flow direction.',
     ],
-    keywords: ['pipe', 'diameter', 'discharge'],
+    keywords: ['pipe', 'diameter', 'discharge', 'velocity'],
   );
 }
 
