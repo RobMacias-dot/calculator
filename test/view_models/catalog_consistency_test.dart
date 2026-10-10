@@ -8,46 +8,45 @@ import 'package:flutter_test/flutter_test.dart';
 import '../support/catalog_audit_samples.dart';
 
 void main() {
-  test(
-    'visual input labels retain the operands used by the current report',
-    () {
-      final catalog = createInitialCatalog();
-      final divider = CalculatorViewModel(catalog.byId('voltage-divider')!);
-      final gas = CalculatorViewModel(catalog.byId('ideal-gas-law')!);
-      addTearDown(divider.dispose);
-      addTearDown(gas.dispose);
-      <String, String>{
-        'voltage': '1.0000001',
-        'r1': '1',
-        'r2': '1',
-      }.forEach(divider.setValue);
-      divider.calculate();
-      final circuit = mapVisualModel(divider.result!)!;
-      expect(circuit.summary, contains('Input 1.0000001 V'));
-      expect(
-        circuit.summary,
-        contains('Output ${divider.result!.formattedValue}'),
-      );
-      <String, String>{
-        'amount': '1.0000001',
-        'temperature': '300',
-        'volume': '0.025',
-      }.forEach(gas.setValue);
-      gas.calculate();
-      final chamber =
-          mapVisualModel(gas.result!)! as IdealGasVisualizationModel;
-      expect(chamber.label(GasVariable.amount), '1.0000001 mol');
-      expect(chamber.summary, contains('amount 1.0000001 mol'));
-      expect(
-        chamber.label(GasVariable.pressure),
-        '${gas.result!.formattedValue} Pa',
-      );
-      expect(
-        chamber.summary,
-        contains('pressure ${gas.result!.formattedValue} Pa'),
-      );
-    },
-  );
+  test('compact visual labels retain exact model and report operands', () {
+    final catalog = createInitialCatalog();
+    final divider = CalculatorViewModel(catalog.byId('voltage-divider')!);
+    final gas = CalculatorViewModel(catalog.byId('ideal-gas-law')!);
+    addTearDown(divider.dispose);
+    addTearDown(gas.dispose);
+    <String, String>{
+      'voltage': '1.0000001',
+      'r1': '1',
+      'r2': '1',
+    }.forEach(divider.setValue);
+    divider.calculate();
+    final circuit = mapVisualModel(divider.result!)! as DividerVisualModel;
+    expect(circuit.summary, contains('Input 1 V'));
+    expect(circuit.inputs.voltage.baseValue, 1.0000001);
+    expect(divider.result!.substitution, contains('1.0000001'));
+    expect(divider.result!.value, 1.0000001 / 2);
+    expect(
+      circuit.summary,
+      contains('Output ${divider.result!.formattedValue}'),
+    );
+    <String, String>{
+      'amount': '1.0000001',
+      'temperature': '300',
+      'volume': '0.025',
+    }.forEach(gas.setValue);
+    gas.calculate();
+    final chamber = mapVisualModel(gas.result!)! as IdealGasVisualizationModel;
+    expect(chamber.label(GasVariable.amount), '1.0000001 mol');
+    expect(chamber.summary, contains('amount 1.0000001 mol'));
+    expect(
+      chamber.label(GasVariable.pressure),
+      '${gas.result!.formattedValue} Pa',
+    );
+    expect(
+      chamber.summary,
+      contains('pressure ${gas.result!.formattedValue} Pa'),
+    );
+  });
   test('all catalog modes invalidate, normalize units, recover and reset', () {
     final catalog = createInitialCatalog();
     final visited = <String>{};

@@ -15,15 +15,15 @@ abstract final class NumberFormatting {
   }
 
   /// Never feeds back into calculations. Nonfinite values are not valid results.
-  static String format(double value) {
+  static String format(double value, {int decimals = maxDecimals}) {
     if (!value.isFinite) return 'Not representable';
     if (value == 0) return '0';
     final magnitude = value.abs();
     if (magnitude < scientificLowerBound || magnitude >= scientificUpperBound) {
-      final parts = value.toStringAsExponential(maxDecimals).split('e');
+      final parts = value.toStringAsExponential(decimals).split('e');
       return '${_trim(parts.first)}e${int.parse(parts.last)}';
     }
-    return _trim(value.toStringAsFixed(maxDecimals));
+    return _trim(value.toStringAsFixed(decimals));
   }
 
   static String _trim(String value) => value.contains('.')

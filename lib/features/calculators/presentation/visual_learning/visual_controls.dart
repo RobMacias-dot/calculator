@@ -45,7 +45,7 @@ class VisualInputControl extends StatelessWidget {
               max: maximum,
               value: input.baseValue.clamp(minimum, maximum),
               semanticFormatterCallback: (value) =>
-                  '${NumberFormatting.format(value)} ${input.baseUnit.symbol}',
+                  '${NumberFormatting.format(value, decimals: 4)} ${input.baseUnit.symbol}',
               onChanged: (value) {
                 // The form may use kV/kΩ, etc. Reuse its unit conversion, and
                 // round-trip the number, never write a formatted/rounded label.

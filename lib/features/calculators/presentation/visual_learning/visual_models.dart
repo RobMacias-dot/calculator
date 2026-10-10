@@ -193,8 +193,10 @@ final class BernoulliVisualModel extends VisualModel {
 double _displayMagnitude(double value, double ceiling) =>
     (math.log(1 + value.abs()) / math.log(1 + ceiling)).clamp(0.0, 1.0);
 
+// Visual labels and scene summaries are presentation only. Exact operands stay
+// in the calculation report; these strings never feed back into the model.
 String quantityLabel(CalculatedInput input) =>
-    '${NumberFormatting.operand(input.baseValue)}${input.baseUnit.symbol.isEmpty ? '' : ' ${input.baseUnit.symbol}'}';
+    '${NumberFormatting.format(input.baseValue, decimals: 4)}${input.baseUnit.symbol.isEmpty ? '' : ' ${input.baseUnit.symbol}'}';
 
 /// Maps only successful reports. Never parses user text, reruns a solver or
 /// reverse-parses rounded presentation strings. Clamping is visual only.
