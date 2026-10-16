@@ -1,4 +1,4 @@
-package com.engineeringtoolkit.engineering_toolkit
+package com.robmac.engineeringtoolkit
 
 import io.flutter.embedding.android.FlutterActivity
 
