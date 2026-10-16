@@ -53,3 +53,9 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Local branding evidence and build-only dependencies
+/tools/branding/node_modules/
+/docs/branding/device/
+/docs/branding/apk-*.txt
+/docs/branding/preserved-files.sha256.json

@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "description": "Build-only launcher artwork generator",
+  "engines": { "node": ">=20.9.0" },
+  "dependencies": { "sharp": "0.35.5" }
+}
