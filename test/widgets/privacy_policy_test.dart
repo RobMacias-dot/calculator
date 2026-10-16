@@ -84,6 +84,10 @@ void main() {
         await openPolicy(tester);
         expect(find.text('Could not open the Privacy Policy.'), findsOneWidget);
         expect(find.text('Copy link'), findsOneWidget);
+        // Dismiss feedback before retrying the button underneath it.
+        await tester.drag(find.byType(SnackBar), const Offset(0, 200));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Privacy Policy'));
         await tester.tap(find.text('Privacy Policy'));
         await tester.pumpAndSettle();
         expect(attempts, 2);
@@ -190,8 +194,8 @@ void main() {
             final focused = FocusManager.instance.primaryFocus?.context;
             if (focused != null &&
                 (focused.widget == tester.widget(button) ||
-                    focused.findAncestorWidgetOfExactType<TextButton>() !=
-                        null)) {
+                    focused.findAncestorWidgetOfExactType<TextButton>() ==
+                        tester.widget(button))) {
               break;
             }
           }

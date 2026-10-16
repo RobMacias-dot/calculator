@@ -16,6 +16,11 @@ class SettingsScreen extends StatelessWidget {
   final PreferencesController preferences;
   final VoidCallback onBack;
 
+  // Flutter embeds the pubspec version (including build flag overrides).
+  static String? get _applicationVersion => appBuildName == null
+      ? null
+      : '$appBuildName${appBuildNumber == null ? '' : ' ($appBuildNumber)'}';
+
   static final Uri _privacyPolicyUrl = Uri.parse(
     'https://robmacsoftware.github.io/engineering-toolkit/privacy/',
   );
@@ -108,6 +113,23 @@ class SettingsScreen extends StatelessWidget {
             Text('About', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: AppSpacing.sm),
             const Text('Engineering Toolkit\nCalculate. Understand. Build.'),
+            const SizedBox(height: AppSpacing.sm),
+            const Text('RobMac Software'),
+            Text(
+              _applicationVersion == null
+                  ? 'Version unavailable'
+                  : 'Version $_applicationVersion',
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            TextButton.icon(
+              onPressed: () => showLicensePage(
+                context: context,
+                applicationName: 'Engineering Toolkit',
+                applicationVersion: _applicationVersion,
+              ),
+              icon: const Icon(Icons.description_outlined),
+              label: const Text('Open-source licenses'),
+            ),
             const SizedBox(height: AppSpacing.sm),
             TextButton.icon(
               onPressed: () => _openPrivacyPolicy(context),
