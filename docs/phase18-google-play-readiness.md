@@ -1,6 +1,6 @@
 # Google Play readiness matrix — Phase 18
 
-Reviewed 2026-10-16 (America/Mexico_City). **Overall: BLOCKED** pending owner upload key, signed AAB verification, device validation and Console requirements. No artifact was published or uploaded.
+Reviewed 2026-10-16 (America/Mexico_City). **Overall: BLOCKED** pending owner upload key, signed AAB verification, device validation, Console requirements, support website/privacy publication and voluntary-support policy review. No artifact was published or uploaded.
 
 Evidence scope: compiled new-ID APK at `build/phase18/identity-release-debug-signed.apk` before About/signing changes; current Gradle/source/merged manifests; debug APK built after About/signing; tests; official documentation. The preserved release APK is explicitly DEBUG-SIGNED and is not the final source revision. Static checks do not substitute for testing the final production AAB.
 
@@ -12,7 +12,7 @@ Evidence scope: compiled new-ID APK at `build/phase18/identity-release-debug-sig
 | Target SDK policy | PASS | Current official mobile new-app/update requirement is API 36 since 2026-08-31; no extension is needed for this target. |
 | Release permissions | PASS WITH LIMITATIONS | Compiled release APK has only com.robmac.engineeringtoolkit.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION (signature). No INTERNET or sensitive permissions. Recheck final signed AAB. Debug INTERNET is expected for development. |
 | Backup | PASS WITH LIMITATIONS | allowBackup=false, fullBackupContent and dataExtractionRules references compile correctly. Both XML files exclude supported domains. OEM transfer and historic backups cannot be guaranteed; no physical restore test performed. |
-| Privacy Policy | PASS | Official EN/ES HTML fetched, dated October 15, 2026, approved identity; external browser and fallback covered by widget tests. Owner must enter public URL in Console. |
+| Privacy Policy | PENDING PUBLICATION | Existing EN/ES pages return 200 and retain October 15, 2026 date. Support amendments are drafted in phase18-voluntary-support-privacy-amendments.md; owner must review/publish both languages and enter URL in Console. |
 | About/licenses | PASS WITH LIMITATIONS | Developer, actual embedded Flutter version, built-in LicensePage; focused widget and accessibility tests. No new runtime package. Final production/device verification pending. |
 | Launcher assets | PASS WITH LIMITATIONS | Original SVG hash preserved; legacy/round/adaptive/monochrome resources compile, preview inspected, safe radius 31.8596dp <=33dp. Historical Xiaomi evidence applies to old ID only. |
 | Play icon | PASS WITH LIMITATIONS | 512x512 opaque RGBA PNG, 34,087 bytes; no precut corners/external shadow. Candidate awaits owner/Console review. |
@@ -23,12 +23,24 @@ Evidence scope: compiled new-ID APK at `build/phase18/identity-release-debug-sig
 | Release debuggable | PASS WITH LIMITATIONS | Attribute absent in compiled release manifest, therefore false by default. Confirm final AAB. |
 | Exported components | PASS WITH LIMITATIONS | MainActivity exported as launcher. AndroidX ProfileInstallReceiver exported with android.permission.DUMP protection (expected AndroidX tooling). InitializationProvider and URL launcher WebViewActivity are not exported. No unexpected components found. |
 | Dependencies | PASS WITH LIMITATIONS | Flutter 3.47.2 / Dart 3.13.2; AGP 9.1.0, Gradle 9.3.1, Kotlin 2.4.0, NDK 28.2.13676358. Direct product packages go_router/shared_preferences/url_launcher only. No collection SDK found; final artifact recheck needed. Build-only sharp 0.35.5 documented separately. |
-| Data Safety | PASS WITH LIMITATIONS | Evidence-based draft prepared; owner must approve answers for all distributed variants and submit. |
+| Data Safety | PENDING OWNER REVIEW | Draft extended for app/browser/website/processors/merchant-account boundaries. No in-app financial data collection verified; website and owner practices require review before final No answers/submission. |
 | Store listing/content declarations | NOT VERIFIED | Owner must finish descriptions, support contact, screenshots/feature graphic, content rating, target audience, ads declaration and any applicable policy forms. No Console access/changes. |
 | Developer verification/package registration | NOT VERIFIED | Owner must check identity verification and registration of this exact package/certificate in Play Console; no assumption that it is registered. |
 | Testing-track requirements | NOT VERIFIED | Account type/date and production access unknown. Applicable new personal accounts require at least 12 testers continuously opted in for 14 days; owner must check applicability and complete the process. |
 | Accounts/ads/backend-specific features | NOT APPLICABLE | No accounts, ads or backend found in this release scope. Do not infer audience/legal compliance from this. |
 | Owner-device validation | NOT VERIFIED | New identity/About/licenses have not been tested on Xiaomi. No install, uninstall, clear-data or migration performed. Old and new identities may coexist. |
+
+## Voluntary support supplemental gates (2026-10-16)
+
+| Item | Status | Evidence / remaining action |
+|---|---|---|
+| Permanent free model | IMPLEMENTED | All functionality remains free; optional About entry, no benefits/rewards/accounts/payment SDK. |
+| Support app integration | VERIFIED TECHNICALLY | Constant official support URL, externalApplication, failure/copy/disposal/accessibility coverage; see phase18-voluntary-support-readiness.md for exact validation ledger. No end-to-end live-checkout claim. |
+| Support website | BLOCKED — SUPPORT WEBSITE NOT YET PUBLISHED | https://robmacsoftware.github.io/support/ and https://robmacsoftware.github.io/es/support/ returned 404. Owner must publish/audit separate website and provider navigation. |
+| Payments eligibility | PENDING OWNER / GOOGLE PLAY POLICY REVIEW | No digital benefits verified; recipient eligibility, 100% creator condition and fee treatment unresolved. Website indirection does not establish exemption. See phase18-voluntary-support-compliance.md. |
+| Public support privacy amendments | BLOCKED | EN/ES proposal exists only in app repository; owner must finalize merchant handling disclosures and publish separately. |
+
+Prior artifact evidence above is retained with its original limitations. New support verification supplements it; no new production signed APK/AAB or physical-device PASS is claimed.
 
 ## Applicable official requirements and dates
 
