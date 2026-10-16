@@ -24,13 +24,17 @@ class SettingsScreen extends StatelessWidget {
   static final Uri _privacyPolicyUrl = Uri.parse(
     'https://robmacsoftware.github.io/engineering-toolkit/privacy/',
   );
+  static final Uri _supportUrl = Uri.parse(
+    'https://robmacsoftware.github.io/support/',
+  );
 
-  Future<void> _openPrivacyPolicy(BuildContext context) async {
+  Future<void> _openExternalPage(
+    BuildContext context,
+    Uri url,
+    String pageName,
+  ) async {
     try {
-      if (await launchUrl(
-        _privacyPolicyUrl,
-        mode: LaunchMode.externalApplication,
-      )) {
+      if (await launchUrl(url, mode: LaunchMode.externalApplication)) {
         return;
       }
     } catch (_) {
@@ -41,23 +45,25 @@ class SettingsScreen extends StatelessWidget {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: const Text('Could not open the Privacy Policy.'),
+          content: Text('Could not open the $pageName.'),
           action: SnackBarAction(
             label: 'Copy link',
-            onPressed: () => _copyPrivacyPolicyUrl(context),
+            onPressed: () => _copyPageUrl(context, url, pageName),
           ),
         ),
       );
   }
 
-  Future<void> _copyPrivacyPolicyUrl(BuildContext context) async {
-    var message = 'Privacy Policy link copied';
+  Future<void> _copyPageUrl(
+    BuildContext context,
+    Uri url,
+    String pageName,
+  ) async {
+    var message = '$pageName link copied';
     try {
-      await Clipboard.setData(
-        ClipboardData(text: _privacyPolicyUrl.toString()),
-      );
+      await Clipboard.setData(ClipboardData(text: url.toString()));
     } catch (_) {
-      message = 'Could not copy the Privacy Policy link.';
+      message = 'Could not copy the $pageName link.';
     }
     if (!context.mounted) return;
     ScaffoldMessenger.of(context)
@@ -132,9 +138,24 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
             TextButton.icon(
-              onPressed: () => _openPrivacyPolicy(context),
+              onPressed: () => _openExternalPage(
+                context,
+                _privacyPolicyUrl,
+                'Privacy Policy',
+              ),
               icon: const Icon(Icons.open_in_new_rounded),
               label: const Text('Privacy Policy'),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            TextButton.icon(
+              onPressed: () =>
+                  _openExternalPage(context, _supportUrl, 'Support page'),
+              icon: const Icon(Icons.favorite_border_rounded),
+              label: const Text('Support Development'),
+            ),
+            const Text(
+              'Optional contributions help us continue developing free engineering tools. '
+              'All functionality remains free for everyone.',
             ),
           ],
         ),

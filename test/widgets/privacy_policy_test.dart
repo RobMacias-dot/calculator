@@ -59,7 +59,11 @@ void main() {
       expect(arguments['useSafariVC'], false);
       expect(arguments['useWebView'], false);
       expect(find.byType(SnackBar), findsNothing);
-      await tester.ensureVisible(find.byTooltip('Back'));
+      await tester.scrollUntilVisible(
+        find.byTooltip('Back'),
+        -200,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.tap(find.byTooltip('Back'));
       await tester.pumpAndSettle();
       expect(find.text('About'), findsNothing);
@@ -91,7 +95,11 @@ void main() {
         await tester.tap(find.text('Privacy Policy'));
         await tester.pumpAndSettle();
         expect(attempts, 2);
-        await tester.ensureVisible(find.byTooltip('Back'));
+        await tester.scrollUntilVisible(
+          find.byTooltip('Back'),
+          -200,
+          scrollable: find.byType(Scrollable).first,
+        );
         await tester.tap(find.byTooltip('Back'));
         await tester.pumpAndSettle();
         expect(find.text('About'), findsNothing);
