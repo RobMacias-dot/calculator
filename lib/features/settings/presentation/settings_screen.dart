@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/design_system/app_tokens.dart';
 import '../../../core/design_system/detail_page.dart';
@@ -13,6 +15,50 @@ class SettingsScreen extends StatelessWidget {
   });
   final PreferencesController preferences;
   final VoidCallback onBack;
+
+  static final Uri _privacyPolicyUrl = Uri.parse(
+    'https://robmacsoftware.github.io/engineering-toolkit/privacy/',
+  );
+
+  Future<void> _openPrivacyPolicy(BuildContext context) async {
+    try {
+      if (await launchUrl(
+        _privacyPolicyUrl,
+        mode: LaunchMode.externalApplication,
+      )) {
+        return;
+      }
+    } catch (_) {
+      // A missing handler or platform failure leaves Settings usable.
+    }
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: const Text('Could not open the Privacy Policy.'),
+          action: SnackBarAction(
+            label: 'Copy link',
+            onPressed: () => _copyPrivacyPolicyUrl(context),
+          ),
+        ),
+      );
+  }
+
+  Future<void> _copyPrivacyPolicyUrl(BuildContext context) async {
+    var message = 'Privacy Policy link copied';
+    try {
+      await Clipboard.setData(
+        ClipboardData(text: _privacyPolicyUrl.toString()),
+      );
+    } catch (_) {
+      message = 'Could not copy the Privacy Policy link.';
+    }
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   Widget build(BuildContext context) => DetailPage(
@@ -62,6 +108,12 @@ class SettingsScreen extends StatelessWidget {
             Text('About', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: AppSpacing.sm),
             const Text('Engineering Toolkit\nCalculate. Understand. Build.'),
+            const SizedBox(height: AppSpacing.sm),
+            TextButton.icon(
+              onPressed: () => _openPrivacyPolicy(context),
+              icon: const Icon(Icons.open_in_new_rounded),
+              label: const Text('Privacy Policy'),
+            ),
           ],
         ),
       ),
